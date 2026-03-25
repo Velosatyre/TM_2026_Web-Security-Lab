@@ -1,6 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 import urllib
+"""
+Première faille, path traversal
+Il est possible en envoyant une requête au serveur
+d'acceder à des fichiers hors du serveur comme par exemple
+etc/passwd
+Comment :
+    Terminal(linux):
+        nc localhost 8080
+        GET ./../../etc/passwd HTTP/1.1
+    Web browser:
+        pas possible pour l'instant
+
+
+"""
 
 PORT = 8080
 HOST = "localhost"
@@ -12,8 +26,12 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         self.send_header("content-type", "text/html")
         self.end_headers()
         
-        parsed = urllib.parse.urlparse(self.path)
-        print(parsed)
+        parsed = urllib.parse.urlparse(self.path)       #gets args of the url
+        path = parsed.path                              #gets only path in the url
+        path = "."+path                                 #adds . to path so it works locally
+        file = open(path)                               #opens file in the path
+        self.wfile.write(bytes(file.read(), "utf-8"))   #reads the file, transform into bytes and writes it into wfile to send it to reciever
+        #print(path)
         #parameters =
         #self.wfile.write(bytes("<html><body><h1>HELLO WOLRD</h1></body></html>", "utf-8"))
         
