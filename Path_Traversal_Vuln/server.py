@@ -29,10 +29,15 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)       #gets args of the url
         path = parsed.path                              #gets only path in the url
         path = "."+path                                 #adds . to path so it works locally
-        file = open(path)                               #opens file in the path
-        self.wfile.write(bytes(file.read(), "utf-8"))   #reads the file, transform into bytes and writes it into wfile to send it to reciever
-        #print(path)
-        #parameters =
+        print(path)
+        
+        try :
+            file = open(path)                           #opens file in the path
+        except:
+            file = open("index.html")
+        finally:
+            self.wfile.write(bytes(file.read(), "utf-8"))   #reads the file, transform into bytes and writes it into wfile to send it to reciever
+
         #self.wfile.write(bytes("<html><body><h1>HELLO WOLRD</h1></body></html>", "utf-8"))
         
 
