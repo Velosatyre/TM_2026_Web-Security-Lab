@@ -11,12 +11,15 @@ Comment :
         nc localhost 8080  #cela lance netcat et dit d'envoyer des requêtes à localhost sur le port 8080
         GET /../../../etc/passwd HTTP/1.1   #il faut écrire à la main la requête
 
-        curl http://localhost:8080/Path_Traversal_Vuln/login.html?filename=../../../etc/passwd
+        curl http://localhost:8080/login.html?filename=../../../etc/passwd
     Web browser:
         Il faut click sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filname=
         avec ../../../etc/passwd
-        http://localhost:8080/Path_Traversal_Vuln/login.html?filename=../../../etc/passwd
-    
+        http://localhost:8080/login.html?filename=../../../etc/passwd
+Expliquation :
+    Dans une base de données ../ signifie de remonter d'une directory; User:~/dossier/dossier$ cd ../ -> User:~/dossier$
+    Donc quand dans l'url on écrit ../../../etc/passwd, le serveur, pour aller chercher les fichier, il va remonter trois fois 
+    puis va entrer dans le dossier /etc pour ouvrir le fichier passwd -> cette manipulation marche uniquement si le serveur se trouve au troisième "étage".
 
 """
 
@@ -37,7 +40,7 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
         try :
             file = open(path)                           #opens file in the path
         except:
-            file = open("Path_Traversal_Vuln/index.html")
+            file = open("index.html")
         finally:
             self.wfile.write(bytes(file.read(), "utf-8"))   #reads the file, transform into bytes and writes it into wfile to send it to reciever
 
@@ -57,7 +60,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
         try :
             file = open(filename)                           #opens file in the path
         except:
-            file = open("Path_Traversal_Vuln/index.html")
+            file = open("index.html")
         finally:
             self.wfile.write(bytes(file.read(), "utf-8"))   #reads the file, transform into bytes and writes it into wfile to send it to reciever
 
