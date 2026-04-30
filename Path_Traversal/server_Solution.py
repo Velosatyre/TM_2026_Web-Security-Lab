@@ -32,10 +32,10 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
     def  do_GET(self):
         parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
         path = parsed.path # récupère uniquement le path de l'url
+        if path == "/": # si le path est juste "/", on le remplace par "index.html" pour afficher la page d'accueil
+            path = "index.html"
         filename = os.path.basename(path) # récupère uniquement le nom du fichier dans le path
-        print(filename)
         path = os.path.join(BASE_DIR, filename) # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
-        print(path)
         abs_path = os.path.abspath(path) # convertit le chemin relatif en chemin absolu
 
         # Vérifie si le chemin absolu est dans la liste des chemins autorisés
@@ -84,6 +84,6 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
             self.send_error(500, f"Server error: {e}")
 
 
-server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
+server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)
 print("Server running")
 server.serve_forever()

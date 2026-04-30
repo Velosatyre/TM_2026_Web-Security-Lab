@@ -38,7 +38,7 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler): #version pour netcat
         parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
         path = parsed.path # récupère uniquement le path de l'url
         path = path[1:]  # enlève le / du début
-        #print(path)
+        print(path)
 
         try:
             file = open(path) # essaie d'ouvrir le fichier dans le path
@@ -69,7 +69,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler): # version pour navig
             self.wfile.write(bytes(file.read(), "utf-8")) # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
 
 
-# server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)  # netcat version
-server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)  # nav. Web/curl version
+server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)  # netcat version
+#server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)  # nav. Web/curl version
 print("server running")
 server.serve_forever() # démarre le serveur et le fait tourner indéfiniment
