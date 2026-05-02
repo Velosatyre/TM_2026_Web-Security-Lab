@@ -20,23 +20,29 @@ import os
 
 PORT = 8080
 HOST = "localhost"
-
-BASE_DIR = os.path.abspath(".") # récupère la chemin absolu dans lequel se trouve le serveur.
-#print("Base directory:", BASE_DIR)
-AUTHORIZED_PATHS = { # liste des fichiers autorisés
+# definition du chemin des fichiers
+BASE_DIR = os.path.dirname(__file__)
+# liste des fichiers autorisés
+AUTHORIZED_PATHS = { 
     os.path.join(BASE_DIR, "login.html"),
     os.path.join(BASE_DIR, "index.html"),
 }
 
 class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
     def  do_GET(self):
-        parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
-        path = parsed.path # récupère uniquement le path de l'url
-        if path == "/": # si le path est juste "/", on le remplace par "index.html" pour afficher la page d'accueil
+        # analyse syntaxique de l'url
+        parsed = urllib.parse.urlparse(self.path) 
+        # récupère uniquement le path de l'url
+        path = parsed.path 
+        # si le path est juste "/", on le remplace par "index.html" pour afficher la page d'accueil
+        if path == "/": 
             path = "index.html"
-        filename = os.path.basename(path) # récupère uniquement le nom du fichier dans le path
-        path = os.path.join(BASE_DIR, filename) # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
-        abs_path = os.path.abspath(path) # convertit le chemin relatif en chemin absolu
+            # récupère uniquement le nom du fichier dans le path
+        filename = os.path.basename(path) 
+        # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
+        path = os.path.join(BASE_DIR, filename) 
+        # convertit le chemin relatif en chemin absolu
+        abs_path = os.path.abspath(path) 
 
         # Vérifie si le chemin absolu est dans la liste des chemins autorisés
         if abs_path not in AUTHORIZED_PATHS:
@@ -45,7 +51,7 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
 
         # si le chemin est autorisé, essaye d'ouvrir le fichier et de l'envoyer au client
         try:
-            with open(abs_path, "r") as f:
+            with open(abs_path) as f:
                 content = f.read()
             self.send_response(200)
             self.send_header("content-type", "text/html")
@@ -58,12 +64,19 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
 
 class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
     def do_GET(self):
-        parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
-        query = dict(urllib.parse.parse_qsl(parsed.query)) # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
-        filename = query.get("filename", "index.html")# récupère la valeur de l'argument "filename" dans le dictionnaire, met "index.html" par défaut si "filename" n'est pas présent
-        filename = os.path.basename(filename) # récupère uniquement le dernier nom à la fin du path
-        path = os.path.join(BASE_DIR, filename) # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
-        abs_path = os.path.abspath(path) # convertit le chemin relatif en chemin absolu
+        # analyse syntaxique de l'url
+        parsed = urllib.parse.urlparse(self.path) 
+        # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
+        query = dict(urllib.parse.parse_qsl(parsed.query)) 
+        # récupère la valeur de l'argument "filename" dans le dictionnaire,
+        # met "index.html" par défaut si "filename" n'est pas présent
+        filename = query.get("filename", "index.html")
+        # récupère uniquement le dernier nom à la fin du path
+        filename = os.path.basename(filename) 
+        # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
+        path = os.path.join(BASE_DIR, filename) 
+        # convertit le chemin relatif en chemin absolu
+        abs_path = os.path.abspath(path) 
 
         # Vérifie si le chemin absolu est dans la liste des chemins autorisés
         if abs_path not in AUTHORIZED_PATHS:
@@ -72,7 +85,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
 
         # si le chemin est autorisé, essaye d'ouvrir le fichier et de l'envoyer au client
         try:
-            with open(abs_path, "r") as f:
+            with open(abs_path) as f:
                 content = f.read()
             self.send_response(200)
             self.send_header("content-type", "text/html")

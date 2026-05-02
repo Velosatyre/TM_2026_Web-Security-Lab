@@ -23,53 +23,75 @@ Expliquation :
     Dans mon cas c'est 4 fois mais cela peut varier en fonction de où vous avez placé ces fichiers.
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib
+import urllib,os
 
 PORT = 8080
 HOST = "localhost"
 
+# definition du chemin des fichiers
+BASE_DIR = os.path.dirname(__file__)
+index_page = os.path.abspath(os.path.join(BASE_DIR, "index.html"))
+login_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 
-class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler): #version pour netcat
+#version pour netcat
+class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler): 
     def do_GET(self):
-        self.send_response(200) # envoie une réponse 200 (ok)
-        self.send_header("content-type", "text/html") # envoi un header avec comme variable en plus le content-type qui est du html
+        # envoie une réponse 200 (ok)
+        self.send_response(200) 
+        # envoi un header avec comme variable en plus le content-type qui est du html
+        self.send_header("content-type", "text/html") 
         self.end_headers()
 
-        parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
-        path = parsed.path # récupère uniquement le path de l'url
-        path = path[1:]  # enlève le / du début
-        print(path)
+        # analyse syntaxique de l'url
+        parsed = urllib.parse.urlparse(self.path) 
+        # récupère uniquement le path de l'url
+        path = parsed.path 
+        # enlève le / du début
+        path = path[1:]  
+        abs_path = os.path.join(BASE_DIR, path)
 
         try:
-            file = open(path) # essaie d'ouvrir le fichier dans le path
+            # essaie d'ouvrir le fichier dans le path
+            file = open(abs_path) 
         except:
-            file = open("./index.html") # si le fichier n'existe pas, ouvre index.html
+            # si le fichier n'existe pas, ouvre index.html
+            file = open(index_page) 
         finally:
-            self.wfile.write(bytes(file.read(), "utf-8")) # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
+            # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
+            self.wfile.write(bytes(file.read(), "utf-8")) 
 
-
-class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler): # version pour navigateur web ou curl
+# version pour navigateur web ou curl
+class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler): 
     def do_GET(self):
-        self.send_response(200) # envoie une réponse 200 (ok)
-        self.send_header("content-type", "text/html") # envoi un header avec comme variable en plus le content-type qui est du html
+        # envoie une réponse 200 (ok)
+        self.send_response(200) 
+        # envoi un header avec comme variable en plus le content-type qui est du html
+        self.send_header("content-type", "text/html") 
         self.end_headers()
 
-        parsed = urllib.parse.urlparse(self.path) # analyse syntaxique de l'url
-        query = dict(urllib.parse.parse_qsl(parsed.query)) # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
-        print(query)
-        filename = query.get("filename") # récupère la valeur de l'argument "filename" dans le dictionnaire
+        # analyse syntaxique de l'url
+        parsed = urllib.parse.urlparse(self.path)
+        # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
+        query = dict(urllib.parse.parse_qsl(parsed.query)) 
+        # récupère la valeur de l'argument "filename" dans le dictionnaire
+        filename = os.path.join(BASE_DIR,query.get("filename")) 
 
         try:
-            print(filename)
-            file = open(filename) # essaie d'ouvrir le fichier spécifié par l'argument "filename"
-            print("ok")
+            # essaie d'ouvrir le fichier spécifié par l'argument "filename"
+            file = open(filename) 
         except:
-            file = open("./index.html") # si le fichier n'existe pas, ouvre index.html
+            # si le fichier n'existe pas, ouvre index.html
+            file = open(index_page) 
         finally:
-            self.wfile.write(bytes(file.read(), "utf-8")) # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
+            # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
+            self.wfile.write(bytes(file.read(), "utf-8")) 
 
+# netcat version
+server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
 
-server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)  # netcat version
-#server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)  # nav. Web/curl version
+# nav. Web/curl version
+#server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
+
 print("server running")
-server.serve_forever() # démarre le serveur et le fait tourner indéfiniment
+# démarre le serveur et le fait tourner indéfiniment
+server.serve_forever() 
