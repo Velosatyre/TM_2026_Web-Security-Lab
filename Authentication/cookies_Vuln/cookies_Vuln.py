@@ -12,6 +12,7 @@ import os
 
 PORT = 8080
 HOST = "localhost"
+
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
@@ -21,17 +22,16 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
-        print(cookies)
+
         file = home_page
         if "logged_in" in cookies:
             logged_in_cookie = cookies["logged_in"].value
-        print(logged_in_cookie)
+            
+            if logged_in_cookie == "True":
+                file = logged_in_page
 
-        if logged_in_cookie == "True":
-            file = logged_in_page
-
-        elif logged_in_cookie == "False":
-            file = home_page
+            elif logged_in_cookie == "False":
+                file = home_page
 
         self.send_response(200)
         self.send_header("content-type", "text/html")
