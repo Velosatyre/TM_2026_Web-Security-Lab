@@ -36,10 +36,15 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("content-type", "text/html")
         if not "logged_in" in cookies:
-            self.send_header("Set-Cookie", "logged_in=False")
+            self.send_header("Set-Cookie", "logged_in=False ; max-age=60")
         self.end_headers()
-        files = open(file)
-        self.wfile.write(bytes(files.read(), "utf-8"))
+        try:
+            with open(file) as f:
+                content = f.read()
+        except FileNotFoundError:
+            self.send_error(404, "Page not found")
+            return
+        self.wfile.write(bytes(content.read(), "utf-8"))
 
         
 

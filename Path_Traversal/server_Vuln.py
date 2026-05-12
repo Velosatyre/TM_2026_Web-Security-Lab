@@ -74,7 +74,10 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
         # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
         query = dict(urllib.parse.parse_qsl(parsed.query)) 
         # récupère la valeur de l'argument "filename" dans le dictionnaire
-        filename = os.path.join(BASE_DIR,query.get("filename")) 
+        try:
+            filename = os.path.join(BASE_DIR,query.get("filename"))
+        except:
+            filename = os.path.join(BASE_DIR,"index.html")
 
         try:
             # essaie d'ouvrir le fichier spécifié par l'argument "filename"

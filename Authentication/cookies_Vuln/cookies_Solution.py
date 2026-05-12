@@ -2,11 +2,16 @@
 Afin de contrôler si un cookie a été changé, l'idée est de faire un hash du cookie qui est envoyé.
 Quand le client fera une requête, le serveur va alors hasher le coookie qu'il reçoit
 et le comparer au sien.
+Pour plus de sécurité, le serveur ne conserve uniquement les hash des passwords.
+De plus le login form à la place d'envoyer une requête GET il envoye une requête POST. 
+Cela enlève les variables de l'url ce qui supprime la possibilité de modifier ces valeurs plus tard.
+Cela permet aussi à un utilisateu de pouvoir juste relancer la page après que son cookies expire
+et il peut refaire la connexion. Dèconnexion après un certains temps
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os, urllib, secrets
+import os, urllib, secrets, hashlib
 
 
 PORT = 8080
@@ -22,11 +27,14 @@ SESSION_ID = {
 
 }
 
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+ 
 Users = {
-    "admin":"admin",
-    "alice":"123",
-    "test":"test"
-}
+    "admin": hash_password("admin"),
+    "alice": hash_password("123"),
+    "test":  hash_password("test")}
+
 
 def SSID_Generator():
     SSID = secrets.token_urlsafe(16)
@@ -38,11 +46,6 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         cookies = SimpleCookie(self.headers.get("Cookie"))
         file = home_page
         
-
-        # analyse syntaxique de l'url
-        parsed = urllib.parse.urlparse(self.path)
-        # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
-        query = dict(urllib.parse.parse_qsl(parsed.query))
         if "SSID" in cookies:
             if cookies["SSID"].value in SESSION_ID:
                 self.send_response(200)
@@ -54,33 +57,57 @@ class Web_Server_TM(BaseHTTPRequestHandler):
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
                 file = home_page_err
+        else:
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+        
+        files = open(file)
+        self.wfile.write(bytes(files.read(), "utf-8"))
 
-        elif "SSID" not in cookies:
+
+    def do_POST(self): # Aidé par IA
+        file = home_page
+        try:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            query = dict(urllib.parse.parse_qsl(body.decode()))
+
             try:
-                if query["user"] in Users and query["pass"] == Users[query["user"]]:
+                username = query["user"]
+                submitted_hash = hash_password(query["pass"])
+ 
+                if username in Users and submitted_hash == Users[username]:
                     SSID = SSID_Generator()
-                    SESSION_ID[SSID] = query["user"]
+                    SESSION_ID[SSID] = username
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.send_header("Set-Cookie", f"SSID={SSID} ; max-age=60")
                     self.end_headers()
                     file = logged_in_page
+
                 else:
-                    file = home_page_err
-                    self.send_response(401)
-                    self.send_header("Content-type", "text/html")
-                    self.end_headers()
+                        self.send_response(401)
+                        self.send_header("Content-type", "text/html")
+                        self.end_headers()
+                        file = home_page_err
+
             except:
-                file = home_page
-                self.send_response(200)
+                self.send_response(400)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
-        
+                file = home_page
+
+        except:
+            self.send_response(500)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            file = home_page
 
         files = open(file)
         self.wfile.write(bytes(files.read(), "utf-8"))
 
-        
+
 
 
 server = HTTPServer((HOST,PORT), Web_Server_TM) 
