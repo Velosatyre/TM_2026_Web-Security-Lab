@@ -1,25 +1,25 @@
 """
 Première faille, path traversal
 Il est possible en envoyant une requête au serveur
-d'acceder à des fichiers hors du serveur comme par exemple
+d'accéder à des fichiers hors du serveur comme par exemple
 etc/passwd
 
 Comment :
     Terminal:
-        nc localhost 8080  #cela lance netcat et dit d'envoyer des requêtes à localhost sur le port 8080
+        nc localhost 8080  #cela lance Netcat et dit d'envoyer des requêtes à localhost sur le port 8080
         GET /../../../../etc/passwd HTTP/1.1   #il faut écrire à la main la requête
 
         curl http://localhost:8080/login.html?filename=../../../../etc/passwd
     Web browser:
-        Il faut appuyer sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filname=
+        Il faut appuyer sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filename=
         avec ../../../etc/passwd
         http://localhost:8080/login.html?filename=../../../../etc/passwd
-Expliquation :
+Explication :
     Dans une base de données ../ signifie de remonter d'une directory; User:~/dossier/dossier$ cd ../ -> User:~/dossier$
     Donc quand dans l'url on écrit ../../../etc/passwd, le serveur, pour aller chercher les fichier, il va remonter trois fois 
     puis va entrer dans le dossier /etc pour ouvrir le fichier passwd -> cette manipulation marche uniquement si le serveur se trouve au troisième "étage".
 
-    P.S le nobre de fois qu'il faut mettre ../ est equivalant à la quantité de dossiers dont il doit sortir pour arriver dans le root.
+    P.S le nombre de fois qu'il faut mettre ../ est équivalant à la quantité de dossiers dont il doit sortir pour arriver dans le root.
     Dans mon cas c'est 4 fois mais cela peut varier en fonction de où vous avez placé ces fichiers.
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -33,7 +33,7 @@ BASE_DIR = os.path.dirname(__file__)
 index_page = os.path.abspath(os.path.join(BASE_DIR, "index.html"))
 login_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 
-#version pour netcat
+#version pour Netcat
 class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler): 
     def do_GET(self):
         # envoie une réponse 200 (ok)
@@ -89,7 +89,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
             # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
             self.wfile.write(bytes(file.read(), "utf-8")) 
 
-# netcat version
+# Netcat version
 server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
 
 # nav. Web/curl version

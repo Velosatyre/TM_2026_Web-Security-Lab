@@ -4,14 +4,14 @@ Il est possible en envoyant une requête au serveur
 d'acceder à des fichiers hors du serveur comme par exemple
 etc/passwd
 
-Voici comment y remedier:
+Voici comment y remédier:
 Il est possible de créer une liste de paths autorisés
-et de bloquer si le serveur essaye d'en accéder une autre. Malheureseument cette technique peut ralentir le processus
-si le site contient beacoup de fichiers mais cette technique bloque toute possibilié de Path Traversal.
+et de bloquer si le serveur essaye d'en accéder une autre. Malheureusement cette technique peut ralentir le processus
+si le site contient beaucoup de fichiers mais cette technique bloque toute possibilité de Path Traversal.
 
 Pour rajouter encore plus de sécurité le path qui est donné est déconstruit pour ne garder que le nom du fichier
 et ensuite il est reconstruit en le joignant à un path de base (BASE_DIR) pour éviter que le serveur puisse remonter dans les dossiers. (crédit à Claude AI)
-Biensûr cela ne marche que si tout les fichiers nécessaires se trouvent dans le même dossier que le serveur.
+Bien sûr cela ne marche que si tout les fichiers nécessaires se trouvent dans le même dossier que le serveur.
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer

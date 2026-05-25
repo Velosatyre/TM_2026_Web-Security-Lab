@@ -1,7 +1,7 @@
 """
-Voici un exemple dimplementation des cookies sans aucune securite
-Le cookie est la variable logged_in qui represente si lutilisateur est
-connecte. Pour ce connecter sans code il suffit dinspecter la page, et aller dans storage.
+Voici un exemple d'implementation des cookies sans aucune sécurité
+Le cookie est la variable logged_in qui représente si l'utilisateur est
+connecte. Pour ce connecter sans code il suffit d'inspecter la page, et aller dans storage.
 La bas il y aura le cookie. Il faut juste changer la valeur de False a True.
 """
 

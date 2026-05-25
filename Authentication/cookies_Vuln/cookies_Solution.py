@@ -1,12 +1,12 @@
 """
 Afin de contrôler si un cookie a été changé, l'idée est de faire un hash du cookie qui est envoyé.
-Quand le client fera une requête, le serveur va alors hasher le coookie qu'il reçoit
+Quand le client fera une requête, le serveur va alors hasher le cookie qu'il reçoit
 et le comparer au sien.
 Pour plus de sécurité, le serveur ne conserve uniquement les hash des passwords.
-De plus le login form à la place d'envoyer une requête GET il envoye une requête POST. 
+De plus le login form à la place d'envoyer une requête GET il envoie une requête POST. 
 Cela enlève les variables de l'url ce qui supprime la possibilité de modifier ces valeurs plus tard.
-Cela permet aussi à un utilisateu de pouvoir juste relancer la page après que son cookies expire
-et il peut refaire la connexion. Dèconnexion après un certains temps
+Cela permet aussi à un utilisateur de pouvoir juste relancer la page après que son cookies expire
+et il peut refaire la connexion. Déconnexion après un certains temps
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -31,9 +31,9 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
  
 Users = {
-    "admin": hash_password("admin"),
-    "alice": hash_password("123"),
-    "test":  hash_password("test")}
+    "Admin": hash_password("admin"),
+    "Alice": hash_password("123"),
+    "Test":  hash_password("test")}
 
 
 def SSID_Generator():
