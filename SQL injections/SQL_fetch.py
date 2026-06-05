@@ -1,11 +1,14 @@
 import psycopg
 import logging
 import time
+import subprocess as sub
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='SQL_requests.log', level=logging.INFO)
+sub.run(["sudo -u postgre psql"])
+sub.run(["CREATE DATABASE tm_db;"])
 
 def FETCH_SQL(sql_query):
-    with psycopg.connect("dbname=test_db user=artur") as conn:
+    with psycopg.connect("dbname=tm_db") as conn:
         with conn.cursor() as cur:
             try :
                 cur.execute(sql_query)

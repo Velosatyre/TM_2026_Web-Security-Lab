@@ -60,7 +60,7 @@ class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
         except FileNotFoundError:
             self.send_error(404, "File not found")
         except Exception as e:
-            self.send_error(500, f"Server error: {e}")
+            self.send_error(500, "Internal server error")
 
 class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -94,7 +94,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
         except FileNotFoundError:
             self.send_error(404, "File not found")
         except Exception as e:
-            self.send_error(500, f"Server error: {e}")
+            self.send_error(500, "Internal server error")
 
 
 server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)
