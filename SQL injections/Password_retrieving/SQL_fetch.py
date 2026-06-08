@@ -26,5 +26,3 @@ def FETCH_SQL(sql_query):
             
     
 
-
-print(FETCH_SQL("select * from users;"))    
