@@ -3,6 +3,9 @@ SQL injection,
 Comment : pseudo : admin';--
     code : ce que vous voulez
 il est important de mettre aprés un pseudo ';-- 
+
+Comment : pseudo : ' or 1=1;--  
+    password : ce que vous voulez
 """
 
 import os,urllib
@@ -10,6 +13,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import SQL_fetch
 from SQL_fetch import FETCH_SQL
 import subprocess as sub
+credentials = { 
+    "username": [],
+    "password": []
+}
 
 PORT = 8080
 HOST = "localhost"
@@ -32,22 +39,32 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
-        print(query["password"])
-        print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
+        #print(query["password"])
+        #print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
         password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
-        print(password)
-        
+        #print(password)
+        for i in password:
+            usr = credentials["username"]
+            pswd = credentials["password"]
+            usr.append(i[1])
+            pswd.append(i[2])
+            credentials["username"] = usr
+            credentials["password"] = pswd
         if len(password) > 0:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             file = open(logged_in)
+            html = file.read().format(**credentials)
         else:
             self.send_response(401)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             file = open(home_err)
-        self.wfile.write(bytes(file.read(), "utf-8"))
+            html = file.read()
+        self.wfile.write(bytes(html, "utf-8"))
+        credentials["username"] = []
+        credentials["password"] = []
 
 
 server = HTTPServer((HOST,PORT), Web_Server_TM) 
