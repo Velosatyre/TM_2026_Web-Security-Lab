@@ -2,7 +2,7 @@
 SQL injection, 
 Comment : pseudo : admin';--
     code : ce que vous voulez
-il est important de mettre aprés un pseudo ';-- 
+il est important de mettre aprés le pseudo ';-- 
 
 Comment : pseudo : ' or 1=1;--  
     password : ce que vous voulez
@@ -26,6 +26,9 @@ logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 FETCH_SQL("delete from users;")
 FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test');")
+# efface sql_requests.log
+with open('yourlog.log', 'w'):
+    pass
 
 class Web_Server_TM(BaseHTTPRequestHandler):
     def do_GET(self):
