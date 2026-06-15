@@ -12,7 +12,7 @@ Comment :
         curl http://localhost:8080/login.html?filename=../../../../etc/passwd
     Web browser:
         Il faut appuyer sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filename=
-        avec ../../../etc/passwd
+        avec ../../../../etc/passwd
         http://localhost:8080/login.html?filename=../../../../etc/passwd
 Explication :
     Dans une base de données ../ signifie de remonter d'une directory; User:~/dossier/dossier$ cd ../ -> User:~/dossier$
@@ -90,10 +90,10 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
             self.wfile.write(bytes(file.read(), "utf-8")) 
 
 # Netcat version
-server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
+#server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)
 
 # nav. Web/curl version
-#server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
+server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
 
 print("server running")
 # démarre le serveur et le fait tourner indéfiniment
