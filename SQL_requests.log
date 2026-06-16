@@ -1,0 +1,2 @@
+INFO:SQL_fetch:Tue Jun 16 12:40:42 2026 : Executed SQL query: select * from users where name = 'test';
+INFO:SQL_fetch:Tue Jun 16 12:40:42 2026 : Fetched data: [(4, 'test', 'test')]
