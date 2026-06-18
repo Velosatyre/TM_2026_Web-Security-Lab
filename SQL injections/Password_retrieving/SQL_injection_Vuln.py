@@ -2,7 +2,7 @@
 SQL injection, 
 Comment : pseudo : admin';--
     code : ce que vous voulez
-il est important de mettre aprés le pseudo ';-- 
+il est important de mettre après le pseudo ';-- 
 
 Comment : pseudo : ' or 1=1;--  
     password : ce que vous voulez
@@ -10,9 +10,8 @@ Comment : pseudo : ' or 1=1;--
 
 import os,urllib
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import SQL_fetch
 from SQL_fetch import FETCH_SQL
-import subprocess as sub
+
 credentials = { 
     "username": [],
     "password": []
@@ -20,14 +19,16 @@ credentials = {
 
 PORT = 8080
 HOST = "localhost"
+
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
+
 FETCH_SQL("delete from users;")
 FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test');")
 # efface sql_requests.log
-with open('yourlog.log', 'w'):
+with open('SQL_requests.log', 'w'):
     pass
 
 class Web_Server_TM(BaseHTTPRequestHandler):

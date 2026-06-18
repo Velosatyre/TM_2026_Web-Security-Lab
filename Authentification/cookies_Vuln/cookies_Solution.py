@@ -6,7 +6,7 @@ Pour plus de sécurité, le serveur ne conserve uniquement les hash des password
 De plus le login form à la place d'envoyer une requête GET il envoie une requête POST. 
 Cela enlève les variables de l'url ce qui supprime la possibilité de modifier ces valeurs plus tard.
 Cela permet aussi à un utilisateur de pouvoir juste relancer la page après que son cookies expire
-et il peut refaire la connexion. Déconnexion après un certains temps
+et il peut refaire la connexion. Déconnexion après un certains temps.
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -18,7 +18,7 @@ PORT = 8080
 HOST = "localhost"
 
 BASE_DIR = os.path.dirname(__file__)
-home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
+home_page = os.path.abspath(os.path.join(BASE_DIR, "homepost.html"))
 home_page_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 home_page_exp = os.path.abspath(os.path.join(BASE_DIR, "home_exp.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
@@ -31,9 +31,10 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
  
 Users = {
-    "Admin": hash_password("admin"),
-    "Alice": hash_password("123"),
-    "Test":  hash_password("test")}
+    "admin": hash_password("admin"),
+    "alice": hash_password("123"),
+    "test":  hash_password("test")
+}
 
 
 def SSID_Generator():

@@ -1,5 +1,6 @@
 """
-Solution très simple, il suffit de faire un check juste avant en regardant si la catégorie reçue est bien dans la liste des catégories de la base de données.
+Solution très simple, il suffit de faire un check juste avant en regardant si la catégorie reçue 
+est bien dans la liste des catégories de la base de données.
 """
 
 import os,urllib
@@ -31,6 +32,12 @@ class Shop(BaseHTTPRequestHandler):
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "';")
         else:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
+
+        if category:
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = %s;",(category))
+        else:
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
+
 
 
 

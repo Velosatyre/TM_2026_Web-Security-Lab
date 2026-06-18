@@ -1,7 +1,7 @@
 PORT = 8080
 
 
-import socket,urllib
+import socket,urllib,html
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 def IP():
@@ -11,11 +11,12 @@ def IP():
     return IP
 
 HOST = IP()
+print(HOST+":"+str(PORT))
 
 class XSS_web_server(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        html = """
+        html_page = """
 <body>
 <form>
     <label for="message">Message</label><br>
@@ -27,13 +28,15 @@ class XSS_web_server(BaseHTTPRequestHandler):
         try:
             message = query["message"]
             print(message)
-            html += "<h1>"+message+"</h1>"
+            # This converts < to &lt;, > to &gt;, & to &amp;, " to &quot;, ' to &#x27;
+            escaped_message = html.escape(message)
+            html_page += "<h1>"+escaped_message+"</h1>"
         except:
             pass
         self.send_response(200)
         self.end_headers()
-        html += "</body>"
-        self.wfile.write(html.encode())
+        html_page += "</body>"
+        self.wfile.write(html_page.encode())
 
 
 server = HTTPServer((HOST,PORT), XSS_web_server) 

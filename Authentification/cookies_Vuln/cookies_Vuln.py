@@ -1,7 +1,7 @@
 """
-Voici un exemple d'implementation des cookies sans aucune sécurité
+Voici un exemple d'implementation des cookies sans aucune sécurité.
 Le cookie est la variable logged_in qui représente si l'utilisateur est
-connecte. Pour ce connecter sans code il suffit d'inspecter la page, et aller dans storage.
+connecté. Pour ce connecter sans code il suffit d'inspecter la page, et aller dans storage.
 La bas il y aura le cookie. Il faut juste changer la valeur de False a True.
 """
 
@@ -22,8 +22,8 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
-
         file = home_page
+
         if "logged_in" in cookies:
             logged_in_cookie = cookies["logged_in"].value
             
@@ -33,24 +33,24 @@ class Web_Server_TM(BaseHTTPRequestHandler):
             elif logged_in_cookie == "False":
                 file = home_page
 
-        self.send_response(200)
-        self.send_header("content-type", "text/html")
+            self.send_response(200)
+            self.send_header("content-type", "text/html")
+
         if not "logged_in" in cookies:
+            self.send_response(200)
             self.send_header("Set-Cookie", "logged_in=False ; max-age=60")
-        self.end_headers()
+
         try:
-            with open(file) as f:
-                content = f.read()
+            file = open(file)
+            file = file.read()
         except FileNotFoundError:
             self.send_error(404, "Page not found")
             return
-        self.wfile.write(bytes(content.read(), "utf-8"))
-
         
+        self.end_headers()
+        self.wfile.write(bytes(file, "utf-8"))
 
 
 server = HTTPServer((HOST,PORT), Web_Server_TM) 
 print("server running")
 server.serve_forever()
-server.server_close()
-print("server stopped")

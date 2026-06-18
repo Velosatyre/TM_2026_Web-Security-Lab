@@ -4,6 +4,7 @@ Par exemple, un attaquant pourrait utiliser des encodages alternatifs pour conto
 Une manière meilleure mais plus lente consiste à créer une liste de charactères autorisés et les filtrer.
 
 Autre solution : hasher les infos des utilisateurs dans la database et aussi hasher ce que les clients envoyent.
+La méthode la plus simple et la plus rapide est d'utiliser les données comme paramètres. 
 """
 
 import os,urllib
@@ -38,13 +39,6 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         query = dict(urllib.parse.parse_qsl(body.decode()))
         username = str(query["username"])
         print(username)
-        # Suppression de certains charactères spéciaux
-        #username = username.replace("'", "")
-        #username = username.replace(";", "")
-        #username = username.replace("-", "")
-        #username = username.replace(" ", "")
-        #username = username.replace("=", "")
-        # Filtrage des charactères autorisés
         username = ''.join(c for c in username if c in allowed_chars)
         print(username)
         try :
@@ -53,6 +47,39 @@ class Web_Server_TM(BaseHTTPRequestHandler):
             usr = []
         print(usr)
         if len(usr) > 0 and usr[0][2] == query["password"]:
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            file = open(logged_in)
+            html = file.read().format(username=username,password=query["password"])
+        else:
+            self.send_response(401)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            file = open(home_err)
+            html = file.read()
+        self.wfile.write(bytes(html, "utf-8"))
+
+class Web_Server_TM_paramètres(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        file = open(home_page)
+        self.wfile.write(bytes(file.read(), "utf-8"))
+
+    def do_POST(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length)
+        query = dict(urllib.parse.parse_qsl(body.decode()))
+        username = str(query["username"])
+        print(username)
+        try :
+            usr = FETCH_SQL("select password from users where name = %s;", (username))
+        except:
+            usr = []
+        print(usr)
+        if len(usr) > 0 and usr[0][0] == query["password"]:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
