@@ -5,11 +5,6 @@ d'accéder à des fichiers hors du serveur comme par exemple
 etc/passwd
 
 Comment :
-    Terminal:
-        nc localhost 8080  #cela lance Netcat et dit d'envoyer des requêtes à localhost sur le port 8080
-        GET /../../../../etc/passwd HTTP/1.1   #il faut écrire à la main la requête
-
-        curl http://localhost:8080/login.html?filename=../../../../etc/passwd
     Web browser:
         Il faut appuyer sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filename=
         avec ../../../../etc/passwd
@@ -21,7 +16,9 @@ Explication :
 
     P.S le nombre de fois qu'il faut mettre ../ est équivalant à la quantité de dossiers dont il doit sortir pour arriver dans le root.
     Dans mon cas c'est 4 fois mais cela peut varier en fonction de où vous avez placé ces fichiers.
+
 """
+#%windir%\System32\config\SAM
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib,os
 
@@ -33,34 +30,7 @@ BASE_DIR = os.path.dirname(__file__)
 index_page = os.path.abspath(os.path.join(BASE_DIR, "index.html"))
 login_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 
-#version pour Netcat
-class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler): 
-    def do_GET(self):
-        # envoie une réponse 200 (ok)
-        self.send_response(200) 
-        # envoi un header avec comme variable en plus le content-type qui est du html
-        self.send_header("content-type", "text/html") 
-        self.end_headers()
 
-        # analyse syntaxique de l'url
-        parsed = urllib.parse.urlparse(self.path) 
-        # récupère uniquement le path de l'url
-        path = parsed.path 
-        # enlève le / du début
-        path = path[1:]  
-        abs_path = os.path.join(BASE_DIR, path)
-
-        try:
-            # essaie d'ouvrir le fichier dans le path
-            file = open(abs_path) 
-        except:
-            # si le fichier n'existe pas, ouvre index.html
-            file = open(index_page) 
-        finally:
-            # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
-            self.wfile.write(bytes(file.read(), "utf-8")) 
-
-# version pour navigateur web ou curl
 class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler): 
     def do_GET(self):
         # envoie une réponse 200 (ok)
@@ -89,10 +59,8 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
             # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
             self.wfile.write(bytes(file.read(), "utf-8")) 
 
-# Netcat version
-#server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)
 
-# nav. Web/curl version
+
 server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
 
 print("server running")
