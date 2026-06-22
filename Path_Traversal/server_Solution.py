@@ -28,41 +28,7 @@ AUTHORIZED_PATHS = {
     os.path.join(BASE_DIR, "index.html"),
 }
 
-class Web_Server_TM_Netcat_V1(BaseHTTPRequestHandler):
-    def  do_GET(self):
-        # analyse syntaxique de l'url
-        parsed = urllib.parse.urlparse(self.path) 
-        # récupère uniquement le path de l'url
-        path = parsed.path 
-        # si le path est juste "/", on le remplace par "index.html" pour afficher la page d'accueil
-        if path == "/": 
-            path = "index.html"
-            # récupère uniquement le nom du fichier dans le path
-        filename = os.path.basename(path) 
-        # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
-        path = os.path.join(BASE_DIR, filename) 
-        # convertit le chemin relatif en chemin absolu
-        abs_path = os.path.abspath(path) 
-
-        # Vérifie si le chemin absolu est dans la liste des chemins autorisés
-        if abs_path not in AUTHORIZED_PATHS:
-            self.send_error(403, "Access denied")
-            return
-
-        # si le chemin est autorisé, essaye d'ouvrir le fichier et de l'envoyer au client
-        try:
-            with open(abs_path) as f:
-                content = f.read()
-            self.send_response(200)
-            self.send_header("content-type", "text/html")
-            self.end_headers()
-            self.wfile.write(bytes(content, "utf-8"))
-        except FileNotFoundError:
-            self.send_error(404, "File not found")
-        except Exception as e:
-            self.send_error(500, "Internal server error")
-
-class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
+class Web_Server_TM(BaseHTTPRequestHandler):
     def do_GET(self):
         # analyse syntaxique de l'url
         parsed = urllib.parse.urlparse(self.path) 
@@ -97,6 +63,6 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
             self.send_error(500, "Internal server error")
 
 
-server = HTTPServer((HOST, PORT), Web_Server_TM_Netcat_V1)
+server = HTTPServer((HOST, PORT), Web_Server_TM)
 print("Server running")
 server.serve_forever()

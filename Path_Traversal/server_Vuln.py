@@ -31,7 +31,7 @@ index_page = os.path.abspath(os.path.join(BASE_DIR, "index.html"))
 login_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 
 
-class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler): 
+class Web_Server_TM(BaseHTTPRequestHandler): 
     def do_GET(self):
         # envoie une réponse 200 (ok)
         self.send_response(200) 
@@ -61,7 +61,7 @@ class Web_Server_TM_Web_browser_V1(BaseHTTPRequestHandler):
 
 
 
-server = HTTPServer((HOST, PORT), Web_Server_TM_Web_browser_V1)
+server = HTTPServer((HOST, PORT), Web_Server_TM)
 
 print("server running")
 # démarre le serveur et le fait tourner indéfiniment
