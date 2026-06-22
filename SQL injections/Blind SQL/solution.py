@@ -4,20 +4,30 @@ Pour cette vulnérabilité il faudra utiliser burpsuite community afin d'automat
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os,secrets
+import os,secrets,socket
 from SQL_fetch import FETCH_SQL
 
 
 PORT = 8080
-HOST = "192.168.1.41"
+
+def IP():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    IP = s.getsockname()[0]
+    return IP
+
+HOST = IP()
 
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
+
 FETCH_SQL("delete from sessions;")
 FETCH_SQL("create table if not exists sessions (SSID varchar(255));")
+
 with open('SQL_requests.log', 'w'):
     pass
+
 def SSID_Generator():
     SSID = secrets.token_urlsafe(16)
     return SSID

@@ -1,6 +1,6 @@
 """
 Les attaques par injection sql laissent la possibilité de récupérer des données qui ne sont pas censées être vues.
-Dans cet exercices il y a quelques étapes à effectuer afin de tout récuperer.
+Dans cet exercices il y a quelques étapes à effectuer afin de tout récupérer.
 Tout d'abord
 
 category=Home' union select table_schema || '~'|| table_name,1 from information_schema.tables order by name;--
@@ -19,6 +19,7 @@ BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
+
 with open('SQL_requests.log', 'w'):
     pass
 
