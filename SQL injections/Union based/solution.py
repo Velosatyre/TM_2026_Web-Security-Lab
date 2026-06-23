@@ -34,7 +34,7 @@ class Shop(BaseHTTPRequestHandler):
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
 
         if category:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = %s;",(category))
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = %s;",(category,))
         else:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
 

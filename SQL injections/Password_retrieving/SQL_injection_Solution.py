@@ -73,12 +73,10 @@ class Web_Server_TM_paramètres(BaseHTTPRequestHandler):
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
         username = str(query["username"])
-        print(username)
         try :
-            usr = FETCH_SQL("select password from users where name = %s;", (username))
+            usr = FETCH_SQL("select password from users where name = %s;", (username,))
         except:
             usr = []
-        print(usr)
         if len(usr) > 0 and usr[0][0] == query["password"]:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -94,7 +92,7 @@ class Web_Server_TM_paramètres(BaseHTTPRequestHandler):
         self.wfile.write(bytes(html, "utf-8"))
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM) 
+server = HTTPServer((HOST,PORT), Web_Server_TM_paramètres) 
 print("server running")
 server.serve_forever()
 server.server_close()

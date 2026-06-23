@@ -21,18 +21,28 @@ $ sudo -u postgres psql -d tm_db -c grant all on schema public to #nom d'utilisa
 """
 
 
-def FETCH_SQL(sql_query):
+def FETCH_SQL(sql_query, params=None): # params handling made by AI
     with psycopg.connect("dbname=tm_db") as conn:
         conn.autocommit = True
         with conn.cursor() as cur:
             try :
-                cur.execute(sql_query)
-                logger.info(time.asctime(time.gmtime())+f" : Executed SQL query: {sql_query}")
+                if params is None:
+                    cur.execute(sql_query)
+                    logger.info(time.asctime(time.gmtime())+f" : Executed SQL query: {sql_query}")
+                else:
+                    # Normalize single non-sequence param (e.g. a string) to a tuple
+                    if not isinstance(params, (list, tuple, dict)):
+                        exec_params = (params,)
+                    else:
+                        exec_params = params
+                    cur.execute(sql_query, exec_params)
+                    logger.info(time.asctime(time.gmtime())+f" : Executed SQL query: {sql_query} with params: {exec_params}")
+
                 response = cur.fetchall()
                 logger.info(time.asctime(time.gmtime())+f" : Fetched data: {response}")
                 return response
             except Exception as e:
                 logger.error(time.asctime(time.gmtime())+" : "+str(e))
+                return []
             
-    
-
+  
