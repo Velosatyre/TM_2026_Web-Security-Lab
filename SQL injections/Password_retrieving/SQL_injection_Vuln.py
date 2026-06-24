@@ -8,7 +8,7 @@ Comment : pseudo : ' or 1=1;--
     password : ce que vous voulez
 """
 
-import os,urllib
+import os,urllib,socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
 
@@ -18,7 +18,13 @@ credentials = {
 }
 
 PORT = 8080
-HOST = "localhost"
+def IP():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    IP = s.getsockname()[0]
+    return IP
+
+HOST = IP()
 
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
@@ -43,9 +49,13 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
+        try:
+            query_psswd = query["password"]
+        except:
+            query_psswd = ''
         #print(query["password"])
         #print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
-        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
+        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query_psswd + "';")
         #print(password)
         for i in password:
             usr = credentials["username"]
