@@ -27,16 +27,16 @@ class Shop(BaseHTTPRequestHandler):
             category = query.split("=")[1]
             category = urllib.parse.unquote(category)
         print(category)
-        listed_categories = [cat[0] for cat in FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category;")]
+        listed_categories = [cat[0] for cat in FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category")]
         if category in listed_categories:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "';")
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "'")
         else:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
 
         if category:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = %s;",(category,))
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = %s",(category,))
         else:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
 
 
 

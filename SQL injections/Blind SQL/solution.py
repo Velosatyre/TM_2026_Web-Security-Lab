@@ -22,8 +22,8 @@ BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
-FETCH_SQL("delete from sessions;")
-FETCH_SQL("create table if not exists sessions (SSID varchar(255));")
+FETCH_SQL("delete from sessions")
+FETCH_SQL("create table if not exists sessions (SSID varchar(255))")
 
 with open('SQL_requests.log', 'w'):
     pass
@@ -45,19 +45,22 @@ class Web_Server_TM(BaseHTTPRequestHandler):
             self.end_headers()
             file = open(home_page)
             html = file.read().format(message="WELCOME")
-            FETCH_SQL("insert into sessions (SSID) values (%s);", (SSID,))
+            FETCH_SQL("insert into sessions (SSID) values (%s)", (SSID,))
             print("done")
         else:
             SSID = cookies["SSID"].value
             print(SSID)
-            sessions = FETCH_SQL("select * from sessions where SSID = (%s);", (SSID,))
+            sessions = FETCH_SQL("select * from sessions where SSID = (%s)", (SSID,))
             print(sessions)
             if sessions == None:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
+                SSID = SSID_Generator()
+                self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
+                FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
             elif len(sessions) > 0:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
@@ -67,9 +70,12 @@ class Web_Server_TM(BaseHTTPRequestHandler):
             else:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
+                SSID = SSID_Generator()
+                self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
+                FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
 
         self.wfile.write(bytes(html, "utf-8"))  
         

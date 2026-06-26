@@ -3,7 +3,7 @@ Les attaques par injection sql laissent la possibilité de récupérer des donn�
 Dans cet exercices il y a quelques étapes à effectuer afin de tout récupérer.
 Tout d'abord
 
-category=Home' union select table_schema || '~'|| table_name,1 from information_schema.tables order by name;--
+category=Home' union select table_schema || '~'|| table_name,1 from information_schema.tables order by name--
 """
 
 
@@ -33,13 +33,13 @@ class Shop(BaseHTTPRequestHandler):
             category = urllib.parse.unquote(category)
         print(category)
         
-        categories_grp = FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category;")
+        categories_grp = FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category")
         categories = [cat[0] for cat in categories_grp]
         print(categories)
         if category:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "';")
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "'")
         else:
-            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE;")
+            products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
 
 
 

@@ -1,10 +1,10 @@
 """
 SQL injection, 
-Comment : pseudo : admin';--
+Comment : pseudo : admin'--
     code : ce que vous voulez
-il est important de mettre après le pseudo ';-- 
+il est important de mettre après le pseudo '-- 
 
-Comment : pseudo : ' or 1=1;--  
+Comment : pseudo : ' or 1=1--  
     password : ce que vous voulez
 """
 
@@ -31,8 +31,8 @@ home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 
-FETCH_SQL("delete from users;")
-FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test');")
+FETCH_SQL("delete from users")
+FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')")
 # efface sql_requests.log
 with open('SQL_requests.log', 'w'):
     pass
@@ -54,8 +54,8 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         except:
             query_psswd = ''
         #print(query["password"])
-        #print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "';")
-        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query_psswd + "';")
+        #print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "'")
+        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query_psswd + "'")
         #print(password)
         for i in password:
             usr = credentials["username"]

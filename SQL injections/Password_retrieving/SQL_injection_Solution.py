@@ -19,8 +19,8 @@ BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
-FETCH_SQL("delete from users;")
-FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test');")
+FETCH_SQL("delete from users")
+FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')")
 allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 # efface sql_requests.log
 with open('SQL_requests.log', 'w'):
@@ -42,7 +42,7 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         username = ''.join(c for c in username if c in allowed_chars)
         print(username)
         try :
-            usr = FETCH_SQL("select * from users where name = '" + username + "';")
+            usr = FETCH_SQL("select * from users where name = '" + username + "'")
         except:
             usr = []
         print(usr)
@@ -74,7 +74,7 @@ class Web_Server_TM_paramètres(BaseHTTPRequestHandler):
         query = dict(urllib.parse.parse_qsl(body.decode()))
         username = str(query["username"])
         try :
-            usr = FETCH_SQL("select password from users where name = %s;", (username,))
+            usr = FETCH_SQL("select password from users where name = %s", (username,))
         except:
             usr = []
         if len(usr) > 0 and usr[0][0] == query["password"]:
