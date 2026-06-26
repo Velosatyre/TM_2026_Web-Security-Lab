@@ -29,7 +29,7 @@ class Shop(BaseHTTPRequestHandler):
         print(query)
         category = None
         if query.startswith("category="):
-            category = query.split("=")[1]
+            category = query.split("category=")[1]
             category = urllib.parse.unquote(category)
         print(category)
         

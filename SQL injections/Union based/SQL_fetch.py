@@ -46,6 +46,3 @@ def FETCH_SQL(sql_query, params=None): # params handling made by AI
                 logger.error(time.asctime(time.gmtime())+" : "+str(e))
                 return []
             
-     
-    
-

@@ -55,14 +55,17 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         else:
             SSID = cookies["SSID"].value
             print(SSID)
-            sessions = FETCH_SQL("select * from sessions where SSID = '" + SSID + "';")
+            sessions = FETCH_SQL("select * from sessions where ssid='"+SSID+"';")
             print(sessions)
             if sessions == None:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
+                SSID = SSID_Generator()
+                self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
+                FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "');")
             elif len(sessions) > 0:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
