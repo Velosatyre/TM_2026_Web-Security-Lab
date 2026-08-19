@@ -15,11 +15,25 @@ Bien sûr cela ne marche que si tout les fichiers nécessaires se trouvent dans 
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib
-import os
+import urllib,os,socket, webbrowser
 
-PORT = 8080
-HOST = "localhost"
+def IP():
+# Source - https://stackoverflow.com/a/166589
+# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-08-17, License - CC BY-SA 3.0
+    """
+    Retourne l'adresse IP locale de la machine.
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    IP = s.getsockname()[0]
+    s.close()
+    return IP
+
+PORT =  8080
+HOST = IP()
+print("adresse du serveur: " + HOST + ":" + str(PORT))
+
 # definition du chemin des fichiers
 BASE_DIR = os.path.dirname(__file__)
 # liste des fichiers autorisés
@@ -64,5 +78,6 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
 
 server = HTTPServer((HOST, PORT), Web_Server_TM)
+webbrowser.open(HOST + ":" + str(PORT))
 print("Server running")
 server.serve_forever()

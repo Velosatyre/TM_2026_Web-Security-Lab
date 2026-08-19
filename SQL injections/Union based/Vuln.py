@@ -7,14 +7,27 @@ category=Home' union select table_schema || '~'|| table_name,1 from information_
 """
 
 
-import os,urllib
+import os,urllib,socket, webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import SQL_fetch
 from SQL_fetch import FETCH_SQL
-import subprocess as sub
 
-PORT = 8080
-HOST = "localhost"
+def IP():
+# Source - https://stackoverflow.com/a/166589
+# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-08-17, License - CC BY-SA 3.0
+    """
+    Retourne l'adresse IP locale de la machine.
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    IP = s.getsockname()[0]
+    s.close()
+    return IP
+
+PORT =  8080
+HOST = IP()
+print("adresse du serveur: " + HOST + ":" + str(PORT))
+
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
@@ -83,6 +96,6 @@ class Shop(BaseHTTPRequestHandler):
         self.wfile.write(html.encode())
 
 server = HTTPServer(("localhost", 8080), Shop)
-
+webbrowser.open(HOST + ":" + str(PORT))
 print("Server running")
 server.serve_forever()
