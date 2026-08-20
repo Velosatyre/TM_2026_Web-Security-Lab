@@ -1,6 +1,14 @@
+"""
+Voici un exemple d'implémentation d'une protection contre les attaques par force brute.
+Le serveur bloque l'adresse IP après 5 tentatives de connexion échouées.
+"""
+
 from http.server import BaseHTTPRequestHandler,HTTPServer
 import os,socket,urllib,webbrowser
 
+"""
+Retourne l'adresse IP locale de la machine.
+"""
 def IP():
 # Source - https://stackoverflow.com/a/166589
 # Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
@@ -24,25 +32,29 @@ credentials = {
     "admin": "admin"
 }
 
-# Dictionnaire IP 
+# Dictionnaire des IP bannies
 IPs = {}
 
 
 # Chemins vers les pages HTML utilisées
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
-psswd = os.path.abspath(os.path.join(BASE_DIR, "home_err_psswd.html"))
-usr = os.path.abspath(os.path.join(BASE_DIR, "home_err_usr.html"))
+wrong_password = os.path.abspath(os.path.join(BASE_DIR, "wrong_password.html"))
+wrong_username = os.path.abspath(os.path.join(BASE_DIR, "wrong_username.html"))
 logged = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
 
-class web_server(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
 
+    """
+    - do_GET sert la page d'accueil ('home_page').
+    - do_POST fait la même chose que dans la version vulnérable, 
+      mais enregistre les tentatives de connexion échouées et bloque l'adresse IP après 5 échecs."""
+    
     def do_GET(self):
-        # Log l'adresse cliente puis servir la page d'accueil
-        print(self.client_address[0])
         self.send_response(200)
         self.end_headers()
+        
         file = open(home_page)
         self.wfile.write(bytes(file.read(), "utf-8"))
 
@@ -50,61 +62,59 @@ class web_server(BaseHTTPRequestHandler):
         # Adresse IP du client
         IP = str(self.client_address[0])
 
-        # Vérifier si l'IP est bannie (ici après > 5 échecs)
+        # Vérifie si l'IP est bannie (ici après > 5 échecs)
         if IP in IPs and IPs[IP] > 5:
-            # Répondre avec une erreur 401
             self.send_error(401, "Your IP has been banned")
             return
 
-        # Lire le corps de la requête POST
+        # Lit le corps de la requête POST
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
 
-        # Extraire les champs attendus
         password = query["password"]
         username = query["username"]
 
-        # Nom d'utilisateur inconnu
+        # Vérification de l'existence de l'utilisateur
         if username not in usernames:
             self.send_response(401, "Wrong username")
             self.end_headers()
-            file = open(usr)
+
+            file = open(wrong_username)
             self.wfile.write(bytes(file.read(), "utf-8"))
-            # Incrémenter le compteur d'échecs pour cette IP
-            try:
-                number = IPs[IP]
-                IPs.update({IP: number + 1})
-            except:
-                IPs[IP] = 1
-            return
+            
         else:
-            # Vérifier le mot de passe
+            # Vérification du mot de passe
             if password == credentials[username]:
                 self.send_response(200)
                 self.end_headers()
+
                 file = open(logged)
                 self.wfile.write(bytes(file.read(), "utf-8"))
                 return
             else:
-                # Mauvais mot de passe : incrément du compteur et page d'erreur
+                # Mauvais mot de passe : compteur + 1 pour cette IP et page d'erreur
                 self.send_response(401, "Wrong password")
                 self.end_headers()
-                file = open(psswd)
+
+                file = open(wrong_password)
                 self.wfile.write(bytes(file.read(), "utf-8"))
+
+                # Si IP déjà présente, alors augmentation de 1
                 try:
                     number = IPs[IP]
                     IPs.update({IP: number + 1})
+                # Sinon ajout de cette adresse avec un compteur à 1
                 except:
                     IPs[IP] = 1
                 return
 
 
-server = HTTPServer((HOST, PORT), web_server)
+Server = HTTPServer((HOST, PORT), WebServer)
 # Ouvre le navigateur vers l'adresse du serveur 
-#(note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
 # Démarre le serveur HTTP et attend les requêtes entrantes en boucle
-server.serve_forever()
+Server.serve_forever()

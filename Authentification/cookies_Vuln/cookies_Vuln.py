@@ -1,22 +1,21 @@
 """
-Voici un exemple d'implementation des cookies sans aucune sécurité.
+Voici un exemple d'implémentation des cookies sans aucune sécurité.
 Le cookie est la variable logged_in qui représente si l'utilisateur est
-connecté. Pour ce connecter sans code il suffit d'inspecter la page, et aller dans storage.
-La bas il y aura le cookie. Il faut juste changer la valeur de False a True.
+connecté.
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
 import os,socket, webbrowser
 
-
+"""
+Retourne l'adresse IP locale de la machine.
+"""
 def IP():
 # Source - https://stackoverflow.com/a/166589
 # Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
 # Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
+
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     IP = s.getsockname()[0]
@@ -27,17 +26,27 @@ PORT =  8080
 HOST = IP()
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
+# Chemins absolus vers les fichiers HTML utilisés
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET analyse les cookies fournit.
+      regarde si le cookie logged_in est présent et si sa valeur est True ou False.
+      Si le cookie n'est pas présent, il est créé avec la valeur False.
+      Lors d'une tentative de connexion réussie, le cookie logged_in est mis à jour avec la valeur True.
+      Dès lors que le cookie a la valeur True, l'utilisateur est considéré comme connecté et peut accéder à la page logged_in.html.
+    """
 
     def do_GET(self):
+        # Récupération des cookies de la requête
         cookies = SimpleCookie(self.headers.get("Cookie"))
         file = home_page
 
+        # Recherche d'un cookie du nom de "logged_in"
         if "logged_in" in cookies:
             logged_in_cookie = cookies["logged_in"].value
             
@@ -52,11 +61,13 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
         if not "logged_in" in cookies:
             self.send_response(200)
+            # Création du cookie "logged_in" avec la valeur False
             self.send_header("Set-Cookie", "logged_in=False ; max-age=60")
 
         try:
             file = open(file)
             file = file.read()
+
         except FileNotFoundError:
             self.send_error(404, "Page not found")
             return
@@ -65,7 +76,11 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         self.wfile.write(bytes(file, "utf-8"))
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()
