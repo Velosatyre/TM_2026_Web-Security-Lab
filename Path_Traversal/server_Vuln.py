@@ -18,7 +18,7 @@ Explication :
     Dans mon cas c'est 4 fois mais cela peut varier en fonction de où vous avez placé ces fichiers.
 
 """
-#%windir%\System32\config\SAM
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib,os,socket, webbrowser
 
@@ -45,7 +45,12 @@ index_page = os.path.abspath(os.path.join(BASE_DIR, "index.html"))
 login_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 
 
-class Web_Server_TM(BaseHTTPRequestHandler): 
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET analyse l'url de la requête.
+      récupère le nom du fichier demandé dans les arguments de l'url
+      et envoie le fichier demandé au client.
+    """
     def do_GET(self):
         # envoie une réponse 200 (ok)
         self.send_response(200) 
@@ -75,8 +80,11 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
 
 
-server = HTTPServer((HOST, PORT), Web_Server_TM)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-# démarre le serveur et le fait tourner indéfiniment
-server.serve_forever() 
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()

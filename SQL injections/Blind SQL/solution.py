@@ -27,17 +27,26 @@ BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
+# Nettoie la table sessions au cas où
 FETCH_SQL("delete from sessions")
 FETCH_SQL("create table if not exists sessions (SSID varchar(255))")
 
 with open('SQL_requests.log', 'w'):
     pass
-
+"""
+Génère un SSID aléatoire pour l'utilisateur.
+"""
 def SSID_Generator():
     SSID = secrets.token_urlsafe(16)
     return SSID
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET analyse les cookies fournit.
+      regarde si le cookie SSID est présent et si sa valeur est dans la table sessions avec une requête SQL.
+      Si le cookie n'est pas présent, il est créé avec un SSID aléatoire.
+    
+    """
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
@@ -86,7 +95,11 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM)
-webbrowser.open(HOST + ":" + str(PORT)) 
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()

@@ -42,7 +42,14 @@ AUTHORIZED_PATHS = {
     os.path.join(BASE_DIR, "index.html"),
 }
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET analyse l'url de la requête.
+      récupère le nom du fichier demandé dans les arguments de l'url.
+      vérifie si le chemin absolu du fichier demandé est dans la liste des chemins autorisés.
+      si le chemin est autorisé, le fichier est ouvert et envoyé au client.
+    """
+
     def do_GET(self):
         # analyse syntaxique de l'url
         parsed = urllib.parse.urlparse(self.path) 
@@ -77,7 +84,11 @@ class Web_Server_TM(BaseHTTPRequestHandler):
             self.send_error(500, "Internal server error")
 
 
-server = HTTPServer((HOST, PORT), Web_Server_TM)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
-print("Server running")
-server.serve_forever()
+
+print("server running")
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()

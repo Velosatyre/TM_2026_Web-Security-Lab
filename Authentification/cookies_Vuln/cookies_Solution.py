@@ -37,25 +37,39 @@ home_page_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 home_page_exp = os.path.abspath(os.path.join(BASE_DIR, "home_exp.html"))
 logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
+# SSID des utilisateurs connectés
 SESSION_ID = {
 
 }
-
+"""
+prend en entrée une chaîne de caractères (le mot de passe) et retourne son hash SHA-256.
+"""
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
- 
+# les mots de passes gardés sous forme de hash
 Users = {
     "admin": hash_password("admin"),
     "alice": hash_password("123"),
     "test":  hash_password("test")
 }
 
-
+"""
+Génère un identifiant randomisé
+"""
 def SSID_Generator():
     SSID = secrets.token_urlsafe(16)
     return SSID
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET analyse les cookies fournit.
+      regarde si le cookie SSID est présent et si sa valeur est dans la liste des SESSION
+      Si le cookie n'est pas présent, il est créé avec la fonction SSID_Generator.
+      
+    - do_POST analyse les données du formulaire de connexion.
+      Si le nom d'utilisateur et le mot de passe sont corrects, 
+      le cookie SSID de l'utilisateur est ajouté dans la liste des utilisateurs connectés.
+    """
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
@@ -125,7 +139,11 @@ class Web_Server_TM(BaseHTTPRequestHandler):
 
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM) 
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()
