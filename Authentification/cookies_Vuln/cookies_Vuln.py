@@ -42,11 +42,9 @@ class WebServer(BaseHTTPRequestHandler):
     """
 
     def do_GET(self):
-        # Récupération des cookies de la requête
         cookies = SimpleCookie(self.headers.get("Cookie"))
         file = home_page
 
-        # Recherche d'un cookie du nom de "logged_in"
         if "logged_in" in cookies:
             logged_in_cookie = cookies["logged_in"].value
             
@@ -61,7 +59,6 @@ class WebServer(BaseHTTPRequestHandler):
 
         if not "logged_in" in cookies:
             self.send_response(200)
-            # Création du cookie "logged_in" avec la valeur False
             self.send_header("Set-Cookie", "logged_in=False ; max-age=60")
 
         try:
@@ -77,10 +74,8 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

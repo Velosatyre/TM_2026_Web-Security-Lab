@@ -51,44 +51,40 @@ class WebServer(BaseHTTPRequestHandler):
     """
 
     def do_GET(self):
-        # analyse syntaxique de l'url
-        parsed = urllib.parse.urlparse(self.path) 
-        # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
-        query = dict(urllib.parse.parse_qsl(parsed.query)) 
-        # récupère la valeur de l'argument "filename" dans le dictionnaire,
-        # met "index.html" par défaut si "filename" n'est pas présent
+        parsed = urllib.parse.urlparse(self.path)
+        query = dict(urllib.parse.parse_qsl(parsed.query))
+
         filename = query.get("filename", "index.html")
-        # récupère uniquement le dernier nom à la fin du path
-        filename = os.path.basename(filename) 
-        # reconstruit le chemin complet du fichier en le joignant à BASE_DIR
-        path = os.path.join(BASE_DIR, filename) 
-        # convertit le chemin relatif en chemin absolu
+        filename = os.path.basename(filename)
+
+        path = os.path.join(BASE_DIR, filename)
         abs_path = os.path.abspath(path) 
 
-        # Vérifie si le chemin absolu est dans la liste des chemins autorisés
         if abs_path not in AUTHORIZED_PATHS:
             self.send_error(403, "Access denied")
+
             return
 
-        # si le chemin est autorisé, essaye d'ouvrir le fichier et de l'envoyer au client
         try:
             with open(abs_path) as f:
                 content = f.read()
+
             self.send_response(200)
             self.send_header("content-type", "text/html")
             self.end_headers()
+
             self.wfile.write(bytes(content, "utf-8"))
+
         except FileNotFoundError:
             self.send_error(404, "File not found")
+
         except Exception as e:
             self.send_error(500, "Internal server error")
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

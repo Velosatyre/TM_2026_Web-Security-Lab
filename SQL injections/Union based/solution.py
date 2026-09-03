@@ -28,25 +28,31 @@ BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
+
 with open('SQL_requests.log', 'w'):
     pass
 
-class Shop(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET compare la catégorie reçue avec celles de la base de données, 
+      si elle n'est pas dans la liste, le serveur renvoie tous les produits.
+      La page html est générée dynamiquement en fonction de la catégorie reçue.
+    """
+
     def do_GET(self):
         query = urllib.parse.urlparse(self.path).query
-        print(query)
         category = None
+
         if query.startswith("category="):
             category = query.split("=")[1]
             category = urllib.parse.unquote(category)
-        print(category)
+            
         listed_categories = [cat[0] for cat in FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category")]
+        
         if category in listed_categories:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "'")
         else:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
-
-
 
 
         # aidé par l'IA
@@ -88,7 +94,9 @@ class Shop(BaseHTTPRequestHandler):
 
         self.wfile.write(html.encode())
 
-server = HTTPServer(("localhost", 8080), Shop)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
-print("Server running")
-server.serve_forever()
+
+print("server running")
+Server.serve_forever()

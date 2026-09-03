@@ -1,5 +1,7 @@
-PORT = 8080
-
+"""
+La solution ici est tout d'abord d'encoder le message reçu.
+Quand le navigateur web reçoit la page html, le message sera interprété comme du texte et non comme du code html ou JavaScript.
+"""
 
 import socket,urllib,html,webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -21,33 +23,45 @@ PORT =  8080
 HOST = IP()
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
-class XSS_web_server(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET filtre le message reçu, les caractères spéciaux sont encodés
+      pour éviter l'affichage de code HTML ou JavaScript.
+    """
 
     def do_GET(self):
         html_page = """
-<body>
-<form>
-    <label for="message">Message</label><br>
-    <input type="text" id="message" name="message">
-</form>
-"""
+        <body>
+        <form>
+            <label for="message">Message</label><br>
+            <input type="text" id="message" name="message">
+        </form>
+        """
+
         parsed = urllib.parse.urlparse(self.path)
         query = dict(urllib.parse.parse_qsl(parsed.query))
+
         try:
             message = query["message"]
-            print(message)
+
             # This converts < to &lt;, > to &gt;, & to &amp;, " to &quot;, ' to &#x27;
             escaped_message = html.escape(message)
             html_page += "<h1>"+escaped_message+"</h1>"
+
         except:
+
             pass
+
         self.send_response(200)
         self.end_headers()
+
         html_page += "</body>"
         self.wfile.write(html_page.encode())
 
 
-server = HTTPServer((HOST,PORT), XSS_web_server)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+Server.serve_forever()

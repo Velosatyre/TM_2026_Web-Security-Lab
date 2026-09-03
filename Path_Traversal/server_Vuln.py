@@ -63,20 +63,25 @@ class WebServer(BaseHTTPRequestHandler):
         # récupère uniquement les arguments de l'url et les insère dans un dictionnaire
         query = dict(urllib.parse.parse_qsl(parsed.query)) 
         # récupère la valeur de l'argument "filename" dans le dictionnaire
-        try:
-            filename = os.path.join(BASE_DIR,query.get("filename"))
-        except:
-            filename = os.path.join(BASE_DIR,"index.html")
+        filename = query.get("filename", "index.html")
 
         try:
+            filename = os.path.join(BASE_DIR,query.get("filename"))
+            print(filename)
+        except:
+            filename = os.path.join(BASE_DIR,"index.html")
+        
+        try:
             # essaie d'ouvrir le fichier spécifié par l'argument "filename"
-            file = open(filename) 
+            file = open(filename)
+            print("ok")
         except:
             # si le fichier n'existe pas, ouvre index.html
             file = open(index_page) 
         finally:
             # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
-            self.wfile.write(bytes(file.read(), "utf-8")) 
+            self.wfile.write(bytes(file.read(), "utf-8"))
+            print("ok2")
 
 
 

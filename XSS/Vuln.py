@@ -1,5 +1,15 @@
-PORT = 8080
+"""
+Ce type de vulnérabilité n'est pas traité dans le TM.
+Ce serveur n'est qu'un bonus qui, pour manque de temps, n'a pas été intégré dans le TM.
 
+Ce serveur donne la possibilité d'afficher du texte de la même manière que les sites
+comme X(Twitter). 
+La subtilité est que le texte n'est pas contrôler.
+Une page html affiche le texte comme un paragraphe. 
+Cela signifie qu'il est possible d'ajouter du code html ou JavaScript et il sera affiché sur le site.
+
+Cette vulnérabilité s'appelle le Cross-Site Scripting (XSS).
+"""
 
 import socket,urllib,webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -21,31 +31,41 @@ PORT =  8080
 HOST = IP()
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
-class XSS_web_server(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET affiche sur la page web le message reçu.
+    """
 
     def do_GET(self):
         html = """
-<body>
-<form>
-    <label for="message">Message</label><br>
-    <input type="text" id="message" name="message">
-</form>
-"""
+        <body>
+        <form>
+            <label for="message">Message</label><br>
+            <input type="text" id="message" name="message">
+        </form>
+        """
+
         parsed = urllib.parse.urlparse(self.path)
         query = dict(urllib.parse.parse_qsl(parsed.query))
+
         try:
             message = query["message"]
-            print(message)
             html += "<h1>"+message+"</h1>"
+
         except:
+
             pass
+
         self.send_response(200)
         self.end_headers()
+
         html += "</body>"
         self.wfile.write(html.encode())
 
 
-server = HTTPServer((HOST,PORT), XSS_web_server)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+Server.serve_forever()

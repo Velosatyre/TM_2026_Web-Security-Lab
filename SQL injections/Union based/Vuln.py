@@ -1,11 +1,8 @@
 """
 Les attaques par injection sql laissent la possibilité de récupérer des données qui ne sont pas censées être vues.
-Dans cet exercices il y a quelques étapes à effectuer afin de tout récupérer.
-Tout d'abord
-
-category=Home' union select table_schema || '~'|| table_name,1 from information_schema.tables order by name--
+Ici il est possible de voir le résultat de la requête SQl,
+Ce qui permet d'utiliser les injections utilisant UNION pour récupérer des données de la base de données.
 """
-
 
 import os,urllib,socket, webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -36,27 +33,31 @@ with open('SQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET prend la catégorie reçue, 
+      va chercher dans la base de données tout les produits de cette catégorie et les affiche.
+      Si la catégorie n'est pas dans la base de données, le serveur renvoie tous les produits.
+    """
 
     def do_GET(self):
         query = urllib.parse.urlparse(self.path).query
-        print(query)
         category = None
+
         if query.startswith("category="):
             category = query.split("category=")[1]
             category = urllib.parse.unquote(category)
-        print(category)
         
         categories_grp = FETCH_SQL("SELECT DISTINCT category FROM products where released = TRUE ORDER BY category")
         categories = [cat[0] for cat in categories_grp]
-        print(categories)
+        
         if category:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE and category = '" + category + "'")
+
         else:
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
 
 
-
-        # AI powered HTML generation
+        # aidé par l'IA
         html = """
         </head>
         <body>
@@ -96,10 +97,8 @@ class WebServer(BaseHTTPRequestHandler):
         self.wfile.write(html.encode())
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

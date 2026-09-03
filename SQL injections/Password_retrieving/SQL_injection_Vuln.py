@@ -1,17 +1,14 @@
 """
-SQL injection, 
-Comment : pseudo : admin'--
-    code : ce que vous voulez
-il est important de mettre après le pseudo '-- 
-
-Comment : pseudo : ' or 1=1--  
-    password : ce que vous voulez
+Ce serveur est vulnérables aux injections SQL.
+Il est possible de le faire à travers la page de connexion.
+Le serveur prend directement les données de connexion pour les mettre dans la requête SQL, sans aucun filtrage.
 """
 
 import os,urllib,socket, webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
 
+# informations des utilisateurs
 credentials = { 
     "username": [],
     "password": []
@@ -39,17 +36,22 @@ home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 
+# Nettoie la table sessions au cas où
 FETCH_SQL("delete from users")
 FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')")
+
 # efface sql_requests.log
 with open('SQL_requests.log', 'w'):
     pass
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+
+
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
+
         file = open(home_page)
         self.wfile.write(bytes(file.read(), "utf-8"))
 
@@ -57,39 +59,50 @@ class Web_Server_TM(BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
+
         try:
-            query_psswd = query["password"]
+            QueryPassword = query["password"]
+
         except:
-            query_psswd = ''
-        #print(query["password"])
-        #print("select * from users where name = '" + query["username"] + "' and password = '" + query["password"] + "'")
-        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + query_psswd + "'")
-        #print(password)
+            QueryPassword = ''
+            
+        password = FETCH_SQL("select * from users where name = '" + query["username"] + "' and password = '" + QueryPassword + "'")
+
         for i in password:
-            usr = credentials["username"]
-            pswd = credentials["password"]
-            usr.append(i[1])
-            pswd.append(i[2])
-            credentials["username"] = usr
-            credentials["password"] = pswd
+            username = credentials["username"]
+            password = credentials["password"]
+
+            username.append(i[1])
+            password.append(i[2])
+
+            credentials["username"] = username
+            credentials["password"] = password
+
         if len(password) > 0:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
+
             file = open(logged_in)
             html = file.read().format(**credentials)
+
         else:
             self.send_response(401)
             self.send_header("Content-type", "text/html")
             self.end_headers()
+
             file = open(home_err)
             html = file.read()
+
         self.wfile.write(bytes(html, "utf-8"))
+
         credentials["username"] = []
         credentials["password"] = []
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+Server.serve_forever()

@@ -51,9 +51,6 @@ logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 SESSION_ID = {
 
 }
-"""
-prend en entrée une chaîne de caractères (le mot de passe) et retourne son hash SHA-256.
-"""
 
 Users = {
     "admin": "admin",
@@ -88,12 +85,16 @@ class WebServer(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
+
                 file = logged_in_page
+
             else:
                 self.send_response(401)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
+
                 file = home_page_err
+
         else:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -105,6 +106,7 @@ class WebServer(BaseHTTPRequestHandler):
 
     def do_POST(self): # Aidé par IA
         file = home_page
+
         try:
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
@@ -117,28 +119,33 @@ class WebServer(BaseHTTPRequestHandler):
                 if username in Users and password == Users[username]:
                     SSID = SSID_Generator()
                     SESSION_ID[SSID] = username
+
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.send_header("Set-Cookie", f"SSID={SSID} ; max-age=60")
                     self.end_headers()
+
                     file = logged_in_page
 
                 else:
                         self.send_response(401)
                         self.send_header("Content-type", "text/html")
                         self.end_headers()
+
                         file = home_page_err
 
             except:
                 self.send_response(400)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
+
                 file = home_page
 
         except:
             self.send_response(500)
             self.send_header("Content-type", "text/html")
             self.end_headers()
+
             file = home_page
 
         files = open(file)
@@ -148,10 +155,8 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

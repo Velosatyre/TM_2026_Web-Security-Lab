@@ -1,4 +1,8 @@
-
+"""
+La solution est d'utiliser des paramètres dans les requêtes SQL, 
+de cette manière les entrées de l'utilisateur ne sont pas interprétées comme du code SQL 
+mais comme des données.
+"""
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
@@ -33,6 +37,7 @@ FETCH_SQL("create table if not exists sessions (SSID varchar(255))")
 
 with open('SQL_requests.log', 'w'):
     pass
+
 """
 Génère un SSID aléatoire pour l'utilisateur.
 """
@@ -42,51 +47,62 @@ def SSID_Generator():
 
 class WebServer(BaseHTTPRequestHandler):
     """
-    - do_GET analyse les cookies fournit.
-      regarde si le cookie SSID est présent et si sa valeur est dans la table sessions avec une requête SQL.
-      Si le cookie n'est pas présent, il est créé avec un SSID aléatoire.
-    
+    - do_GET récupère le cookie de la requête.
+          Si le cookie n'est pas présent ou si le cookie n'est pas dans la liste,
+          alors il génère un nouveau ID et l'insère dans la table sessions.
+          Si le cookie est présent et qu'il est dans la table sessions,
+          alors l'utilisateur reçoit un message "Welcome back". 
+          La subtilité est que la requête SQL utilise des paramètres pour éviter les injections SQL.
     """
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
+
         if not "SSID" in cookies:
-            print("no cookie")
             SSID = SSID_Generator()
+
             self.send_response(200)
             self.send_header("Set-Cookie", f"SSID={SSID};")
             self.send_header("Content-type", "text/html")
             self.end_headers()
+
             file = open(home_page)
             html = file.read().format(message="WELCOME")
+
             FETCH_SQL("insert into sessions (SSID) values (%s)", (SSID,))
-            print("done")
+
         else:
             SSID = cookies["SSID"].value
-            print(SSID)
             sessions = FETCH_SQL("select * from sessions where SSID = (%s)", (SSID,))
-            print(sessions)
+            
             if sessions == None:
+                SSID = SSID_Generator()
+
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
-                SSID = SSID_Generator()
                 self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
+
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
                 FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
+
             elif len(sessions) > 0:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
+
                 file = open(home_page)
                 html = file.read().format(message="WELCOME BACK")
+
             else:
+                SSID = SSID_Generator()
+
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
-                SSID = SSID_Generator()
                 self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
+
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
                 FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
@@ -96,10 +112,8 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
+# Ouvre le navigateur vers l'adresse du serveur
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()
