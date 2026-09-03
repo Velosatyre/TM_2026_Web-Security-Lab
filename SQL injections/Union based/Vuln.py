@@ -19,9 +19,8 @@ def IP():
     Retourne l'adresse IP locale de la machine.
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
+    s.connect(('8.8.8.8', 80))
     IP = s.getsockname()[0]
-    s.close()
     return IP
 
 PORT =  8080
@@ -36,7 +35,8 @@ home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 with open('SQL_requests.log', 'w'):
     pass
 
-class Shop(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+
     def do_GET(self):
         query = urllib.parse.urlparse(self.path).query
         print(query)
@@ -95,7 +95,11 @@ class Shop(BaseHTTPRequestHandler):
 
         self.wfile.write(html.encode())
 
-server = HTTPServer(("localhost", 8080), Shop)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
-print("Server running")
-server.serve_forever()
+
+print("server running")
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()

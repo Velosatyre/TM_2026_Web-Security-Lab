@@ -1,14 +1,11 @@
 """
-Voici un exemple d'implémentation d'une protection contre les attaques par force brute.
+Protection contre les attaques par force brute.
 Le serveur bloque l'adresse IP après 5 tentatives de connexion échouées.
 """
 
 from http.server import BaseHTTPRequestHandler,HTTPServer
 import os,socket,urllib,webbrowser
 
-"""
-Retourne l'adresse IP locale de la machine.
-"""
 def IP():
 # Source - https://stackoverflow.com/a/166589
 # Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
@@ -26,7 +23,7 @@ PORT =  8080
 HOST = IP()
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
-
+# informations des utilisateurs
 usernames = ["admin"]
 credentials = {
     "admin": "admin"
@@ -48,8 +45,11 @@ class WebServer(BaseHTTPRequestHandler):
 
     """
     - do_GET sert la page d'accueil ('home_page').
+    
     - do_POST fait la même chose que dans la version vulnérable, 
-      mais enregistre les tentatives de connexion échouées et bloque l'adresse IP après 5 échecs."""
+      mais enregistre les tentatives de connexion échouées 
+      et bloque l'adresse IP après 5 échecs.
+    """
     
     def do_GET(self):
         self.send_response(200)
@@ -59,15 +59,12 @@ class WebServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(file.read(), "utf-8"))
 
     def do_POST(self):
-        # Adresse IP du client
         IP = str(self.client_address[0])
 
-        # Vérifie si l'IP est bannie (ici après > 5 échecs)
         if IP in IPs and IPs[IP] > 5:
             self.send_error(401, "Your IP has been banned")
             return
 
-        # Lit le corps de la requête POST
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
@@ -75,7 +72,6 @@ class WebServer(BaseHTTPRequestHandler):
         password = query["password"]
         username = query["username"]
 
-        # Vérification de l'existence de l'utilisateur
         if username not in usernames:
             self.send_response(401, "Wrong username")
             self.end_headers()
@@ -84,7 +80,7 @@ class WebServer(BaseHTTPRequestHandler):
             self.wfile.write(bytes(file.read(), "utf-8"))
             
         else:
-            # Vérification du mot de passe
+        
             if password == credentials[username]:
                 self.send_response(200)
                 self.end_headers()
@@ -92,29 +88,28 @@ class WebServer(BaseHTTPRequestHandler):
                 file = open(logged)
                 self.wfile.write(bytes(file.read(), "utf-8"))
                 return
+            
             else:
-                # Mauvais mot de passe : compteur + 1 pour cette IP et page d'erreur
+                
                 self.send_response(401, "Wrong password")
                 self.end_headers()
 
                 file = open(wrong_password)
                 self.wfile.write(bytes(file.read(), "utf-8"))
 
-                # Si IP déjà présente, alors augmentation de 1
                 try:
                     number = IPs[IP]
                     IPs.update({IP: number + 1})
-                # Sinon ajout de cette adresse avec un compteur à 1
+                
                 except:
                     IPs[IP] = 1
+
                 return
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
 # Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
 
 print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

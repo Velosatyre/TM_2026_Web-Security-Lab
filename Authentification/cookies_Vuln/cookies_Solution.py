@@ -1,17 +1,27 @@
 """
-Afin de contrôler si un cookie a été changé, l'idée est de faire un hash du cookie qui est envoyé.
-Quand le client fera une requête, le serveur va alors hasher le cookie qu'il reçoit
-et le comparer au sien.
-Pour plus de sécurité, le serveur ne conserve uniquement les hash des passwords.
-De plus le login form à la place d'envoyer une requête GET il envoie une requête POST. 
+Pour que les cookies ne puissent être changés pour se connecter, 
+le cookie ne servira plus pour stocker la variable de connexion mais plutôt
+il sera utilisé pour garder un identifiant unique généré aléatoirement.
+
+Cet identifiant sera stocké sur le serveur et sera lui associé à la variable de connexion.
+Il est donc impossible de changer le cookie pour se connecter, 
+par contre, théoriquement, il est possible de voler l'identifiant d'un utilisateur connecté. 
+Il faudrait faire que les identifiants changent de temps en temps 
+pour rendre encore plus difficile ces modifications. 
+
+Pour cela, il y a la possibilité de définir un temps de vie pour le cookie.
+Il sera automatiquement supprimé après le temps défini.
+
+De plus le login form à la place d'envoyer une requête GET, il envoie une requête POST. 
 Cela enlève les variables de l'url ce qui supprime la possibilité de modifier ces valeurs plus tard.
+
 Cela permet aussi à un utilisateur de pouvoir juste relancer la page après que son cookies expire
 et il peut refaire la connexion. Déconnexion après un certains temps.
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os, urllib, secrets, hashlib, socket, webbrowser
+import os, urllib, secrets, socket, webbrowser
 
 
 def IP():
@@ -44,13 +54,11 @@ SESSION_ID = {
 """
 prend en entrée une chaîne de caractères (le mot de passe) et retourne son hash SHA-256.
 """
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-# les mots de passes gardés sous forme de hash
+
 Users = {
-    "admin": hash_password("admin"),
-    "alice": hash_password("123"),
-    "test":  hash_password("test")
+    "admin": "admin",
+    "alice": "123",
+    "test":  "test"
 }
 
 """
@@ -104,9 +112,9 @@ class WebServer(BaseHTTPRequestHandler):
 
             try:
                 username = query["user"]
-                submitted_hash = hash_password(query["pass"])
+                password = query["pass"]
  
-                if username in Users and submitted_hash == Users[username]:
+                if username in Users and password == Users[username]:
                     SSID = SSID_Generator()
                     SESSION_ID[SSID] = username
                     self.send_response(200)

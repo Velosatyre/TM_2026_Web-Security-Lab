@@ -9,8 +9,9 @@ Les injections à l'aveugle sont du tâtonnement et pour le faire je vous consei
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os,secrets,socket, webbrowser
 from SQL_fetch import FETCH_SQL
+import os,secrets,socket, webbrowser
+
 
 
 def IP():
@@ -44,56 +45,78 @@ def SSID_Generator():
     SSID = secrets.token_urlsafe(16)
     return SSID
 
-class Web_Server_TM(BaseHTTPRequestHandler):
+class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET récupère le cookie de la requête.
+      Si le cookie n'est pas présent ou si le cookie n'est pas dans la liste,
+      alors il génère un nouveau ID et l'insère dans la table sessions.
+      Si le cookie est présent et qu'il est dans la table sessions,
+      alors l'utilisateur reçoit un message "Welcome back".
+    """
 
     def do_GET(self):
         cookies = SimpleCookie(self.headers.get("Cookie"))
+
         if not "SSID" in cookies:
-            print("no cookie")
             SSID = SSID_Generator()
+
             self.send_response(200)
             self.send_header("Set-Cookie", f"SSID={SSID};")
             self.send_header("Content-type", "text/html")
             self.end_headers()
+
             file = open(home_page)
             html = file.read().format(message="WELCOME")
+
             FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
-            print("done")
+
         else:
             SSID = cookies["SSID"].value
-            print(SSID)
             sessions = FETCH_SQL("select * from sessions where ssid='"+SSID+"'")
-            print(sessions)
+
             if sessions == None:
+                SSID = SSID_Generator()
+
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
-                SSID = SSID_Generator()
                 self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
+
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
+
                 FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
+
             elif len(sessions) > 0:
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
                 self.end_headers()
+
                 file = open(home_page)
+
                 html = file.read().format(message="WELCOME BACK")
             else:
+                SSID = SSID_Generator()
+
                 self.send_response(200)
                 self.send_header("Content-type", "text/html")
-                SSID = SSID_Generator()
                 self.send_header("Set-Cookie", f"SSID={SSID};")
                 self.end_headers()
+
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
+
                 FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
 
         self.wfile.write(bytes(html, "utf-8"))  
         
 
 
-server = HTTPServer((HOST,PORT), Web_Server_TM)
+Server = HTTPServer((HOST, PORT), WebServer)
+# Ouvre le navigateur vers l'adresse du serveur 
+# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
 webbrowser.open(HOST + ":" + str(PORT))
+
 print("server running")
-server.serve_forever()
+# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
+Server.serve_forever()
