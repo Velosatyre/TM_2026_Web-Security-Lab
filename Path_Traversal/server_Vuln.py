@@ -2,20 +2,10 @@
 Première faille, path traversal
 Il est possible en envoyant une requête au serveur
 d'accéder à des fichiers hors du serveur comme par exemple
-etc/passwd
+le fichier passwd qui contient des informations sur les utilisateurs du système.
+Il se trouve dans le répertoire /etc/passwd sur les systèmes Linux.
 
-Comment :
-    Web browser:
-        Il faut appuyer sur login, ensuite dans l'url il faut remplacer ce qu'il y a après filename=
-        avec ../../../../etc/passwd
-        http://localhost:8080/login.html?filename=../../../../etc/passwd
-Explication :
-    Dans une base de données ../ signifie de remonter d'une directory; User:~/dossier/dossier$ cd ../ -> User:~/dossier$
-    Donc quand dans l'url on écrit ../../../etc/passwd, le serveur, pour aller chercher les fichier, il va remonter trois fois 
-    puis va entrer dans le dossier /etc pour ouvrir le fichier passwd -> cette manipulation marche uniquement si le serveur se trouve au troisième "étage".
 
-    P.S le nombre de fois qu'il faut mettre ../ est équivalant à la quantité de dossiers dont il doit sortir pour arriver dans le root.
-    Dans mon cas c'est 4 fois mais cela peut varier en fonction de où vous avez placé ces fichiers.
 
 """
 
@@ -35,8 +25,8 @@ def IP():
     s.close()
     return IP
 
-PORT =  8080
-HOST = IP()
+PORT = int(os.environ.get("PORT", "8080"))
+HOST = os.environ.get("HOST", "0.0.0.0")
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 # definition du chemin des fichiers
@@ -88,7 +78,8 @@ class WebServer(BaseHTTPRequestHandler):
 Server = HTTPServer((HOST, PORT), WebServer)
 # Ouvre le navigateur vers l'adresse du serveur 
 # (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
-webbrowser.open(HOST + ":" + str(PORT))
+if os.environ.get("OPEN_BROWSER") == "1":
+    webbrowser.open("http://localhost:" + str(PORT))
 
 print("server running")
 # Démarre le serveur HTTP et attend les requêtes entrantes en boucle

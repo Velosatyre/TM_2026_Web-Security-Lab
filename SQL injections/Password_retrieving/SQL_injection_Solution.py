@@ -24,8 +24,8 @@ def IP():
     s.close()
     return IP
 
-PORT =  8080
-HOST = IP()
+PORT = int(os.environ.get("PORT", "8080"))
+HOST = os.environ.get("HOST", "0.0.0.0")
 print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 BASE_DIR = os.path.dirname(__file__)
@@ -143,7 +143,8 @@ class WebServerParamètres(BaseHTTPRequestHandler):
 
 Server = HTTPServer((HOST, PORT), WebServer)
 # Ouvre le navigateur vers l'adresse du serveur
-webbrowser.open(HOST + ":" + str(PORT))
+if os.environ.get("OPEN_BROWSER") == "1":
+    webbrowser.open("http://localhost:" + str(PORT))
 
 print("server running")
 Server.serve_forever()

@@ -18,6 +18,7 @@ https://www.w3schools.com/postgresql/postgresql_install.php
 je ne sais pas vraiment si le projet marche sur windows
 """
 
+import os
 import psycopg
 import logging
 import time
@@ -31,7 +32,7 @@ def FETCH_SQL(sql_query, params=None): # params handling made by AI
     Cette fonction a pour but d'ennvoyer les requêtes SQL à la base de données.
     Au passage elle crée un historique des requêtes.
     """
-    with psycopg.connect("dbname=tm_db") as conn:
+    with psycopg.connect(os.environ.get("DATABASE_URL", "dbname=tm_db")) as conn:
         conn.autocommit = True
         with conn.cursor() as cur:
             try :
