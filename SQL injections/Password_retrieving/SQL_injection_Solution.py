@@ -7,7 +7,7 @@ Autre solution : hasher les infos des utilisateurs dans la database et aussi has
 La méthode la plus simple et la plus rapide est d'utiliser les données comme paramètres. 
 """
 
-import os,urllib,socket, webbrowser
+import os,urllib,socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
 
@@ -26,7 +26,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
@@ -142,9 +141,5 @@ class WebServerParamètres(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

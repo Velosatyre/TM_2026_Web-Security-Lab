@@ -29,7 +29,7 @@ logging.basicConfig(filename='SQL_requests.log', level=logging.INFO)
 def FETCH_SQL(sql_query, params=None): # params handling made by AI
     """
     https://www.psycopg.org/psycopg3/docs/basic/usage.html
-    Cette fonction a pour but d'ennvoyer les requêtes SQL à la base de données.
+    Cette fonction a pour but d'envoyer les requêtes SQL à la base de données.
     Au passage elle crée un historique des requêtes.
     """
     with psycopg.connect(os.environ.get("DATABASE_URL", "dbname=tm_db")) as conn:

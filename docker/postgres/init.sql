@@ -1,27 +1,37 @@
+/*Creation des différentes tables
+et insertion de données */
+
+-- Table des utilisateurs
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    password VARCHAR(255)
 );
 
+-- Données d'utilisateurs d'exemples
 INSERT INTO users (id, name, password) VALUES
     (1, 'admin', 'admin'),
     (2, 'alice', 'password'),
     (3, 'bob', 'secret'),
-    (4, 'test', 'test')
-ON CONFLICT (id) DO NOTHING;
+    (4, 'test', 'test');
 
+-- Table des produits
 CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    price NUMERIC(10, 2) NOT NULL,
-    category VARCHAR(255) NOT NULL,
-    released BOOLEAN NOT NULL DEFAULT TRUE
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    price FLOAT,
+    category VARCHAR(255),
+    released BOOLEAN
 );
 
+-- Données de produits d'exemples
 INSERT INTO products (id, name, price, category, released) VALUES
     (1, 'Keyboard', 49.99, 'Computers', TRUE),
     (2, 'Mouse', 19.99, 'Computers', TRUE),
     (3, 'Coffee mug', 12.50, 'Kitchen', TRUE),
-    (4, 'Secret product', 999.99, 'Hidden', FALSE)
-ON CONFLICT (id) DO NOTHING;
+    (4, 'Secret product', 999.99, 'Hidden', FALSE);
+
+-- Table des sessions
+CREATE TABLE IF NOT EXISTS sessions (
+    SSID VARCHAR(255)
+);

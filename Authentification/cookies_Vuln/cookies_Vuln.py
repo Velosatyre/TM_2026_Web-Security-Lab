@@ -6,7 +6,7 @@ connecté.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os,socket, webbrowser
+import os,socket
 
 """
 Retourne l'adresse IP locale de la machine.
@@ -24,7 +24,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 # Chemins absolus vers les fichiers HTML utilisés
 BASE_DIR = os.path.dirname(__file__)
@@ -74,9 +73,5 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

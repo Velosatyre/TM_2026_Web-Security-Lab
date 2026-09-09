@@ -4,7 +4,7 @@ Ici il est possible de voir le résultat de la requête SQl,
 Ce qui permet d'utiliser les injections utilisant UNION pour récupérer des données de la base de données.
 """
 
-import os,urllib,socket, webbrowser
+import os,urllib,socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
 
@@ -22,7 +22,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
@@ -35,7 +34,7 @@ with open('SQL_requests.log', 'w'):
 class WebServer(BaseHTTPRequestHandler):
     """
     - do_GET prend la catégorie reçue, 
-      va chercher dans la base de données tout les produits de cette catégorie et les affiche.
+      va cherch er dans la base de données tout les produits de cette catégorie et les affiche.
       Si la catégorie n'est pas dans la base de données, le serveur renvoie tous les produits.
     """
 
@@ -97,9 +96,5 @@ class WebServer(BaseHTTPRequestHandler):
         self.wfile.write(html.encode())
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

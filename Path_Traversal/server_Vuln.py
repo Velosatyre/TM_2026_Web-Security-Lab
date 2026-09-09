@@ -10,7 +10,7 @@ Il se trouve dans le répertoire /etc/passwd sur les systèmes Linux.
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib,os,socket, webbrowser
+import urllib,os,socket
 
 def IP():
 # Source - https://stackoverflow.com/a/166589
@@ -27,7 +27,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 # definition du chemin des fichiers
 BASE_DIR = os.path.dirname(__file__)
@@ -57,30 +56,21 @@ class WebServer(BaseHTTPRequestHandler):
 
         try:
             filename = os.path.join(BASE_DIR,query.get("filename"))
-            print(filename)
         except:
             filename = os.path.join(BASE_DIR,"index.html")
         
         try:
             # essaie d'ouvrir le fichier spécifié par l'argument "filename"
             file = open(filename)
-            print("ok")
         except:
             # si le fichier n'existe pas, ouvre index.html
             file = open(index_page) 
         finally:
             # lit le contenu du fichier, le convertit en bytes et l'écrit dans wfile pour l'envoyer au client
             self.wfile.write(bytes(file.read(), "utf-8"))
-            print("ok2")
 
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-# (note: le préfixe "http://" n'est pas nécessaire dans la situation d'une adresse IP)
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
-# Démarre le serveur HTTP et attend les requêtes entrantes en boucle
 Server.serve_forever()

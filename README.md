@@ -1,28 +1,30 @@
-# Web security demonstrations in Docker
+> [!IMPORTANT] 
+> #Toute la partie docker a été généré par IA
+> Cela est dû au manque de temps, mais surtout car le sujet principal du TM n'est pas l'utilisation de Docker.
+> En conséquence, mes connaissances en Docker ne sont pas suffisantes pour certains éléments
+> [!TIP]
+> Chaque code généré par IA contiendra en haut de page un commentaire soulignant sa provenance.
 
-This project contains intentionally vulnerable and corrected Python web-server examples. Run only on a local machine or an isolated lab network.
+## Exigences
 
-## Requirements
+Installer Docker en suivant le tutoriel [ici](https://docs.docker.com/engine/).
 
-Install Docker with the Compose plugin. Verify with:
+Vérifier avec:
 
 ```bash
 docker compose version
 ```
+## Lancer un des exercices
 
-## Start a demo
-
-From the project root, choose one demo with `DEMO` and start the stack:
+Depuis le dossier principal du projet, choisir un des exercices avec `EX` et lancer:
 
 ```bash
-DEMO=path-traversal-vuln docker compose up --build
+EX=path-traversal-vuln docker compose up --build
 ```
 
-Open the website in a local browser at <http://localhost:8080>. Stop it with `Ctrl+C`.
+Ouvrir le site <http://localhost:8080> sur lequel se trouve l'exercice.
 
-The container runs one server at a time because every original example uses port `8080`. The PostgreSQL container is started automatically for the SQL demos.
-
-## Available demos
+## Exercices disponibles
 
 - `brute-force-vuln`, `brute-force-solution`
 - `cookies-vuln`, `cookies-solution`
@@ -32,21 +34,23 @@ The container runs one server at a time because every original example uses port
 - `union-sql-vuln`, `union-sql-solution`
 - `xss-vuln`, `xss-solution`
 
-For example:
+Par exemple:
 
 ```bash
-DEMO=xss-vuln docker compose up --build
+EX=xss-vuln docker compose up --build
 ```
 
-To use another local port:
+Pour lancer sur un autre port:
 
 ```bash
-WEB_PORT=8081 DEMO=xss-vuln docker compose up --build
+WEB_PORT=8081 EX=xss-vuln docker compose up --build
 ```
 
-Then open <http://localhost:8081>.
+Ouvrir ensuite <http://localhost:8081>.
 
-To remove the database volume and reset its sample data:
+## Pour terminer
+
+Arrêter le serveur et supprimer le container Docker
 
 ```bash
 docker compose down -v

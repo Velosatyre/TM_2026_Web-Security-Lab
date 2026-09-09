@@ -15,7 +15,7 @@ Bien sûr cela ne marche que si tout les fichiers nécessaires se trouvent dans 
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib,os,socket, webbrowser
+import urllib,os,socket
 
 def IP():
 # Source - https://stackoverflow.com/a/166589
@@ -32,7 +32,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 # definition du chemin des fichiers
 BASE_DIR = os.path.dirname(__file__)
@@ -83,9 +82,5 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

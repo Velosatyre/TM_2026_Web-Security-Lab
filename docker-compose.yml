@@ -17,7 +17,7 @@ services:
   web:
     build: .
     environment:
-      DEMO: ${DEMO:-path-traversal-vuln}
+      EX: ${EX:-path-traversal-vuln}
       DATABASE_URL: postgresql://tm_user:tm_password@db:5432/tm_db
     ports:
       - "${WEB_PORT:-8080}:8080"

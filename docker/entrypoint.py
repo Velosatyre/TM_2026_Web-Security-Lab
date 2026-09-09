@@ -1,11 +1,13 @@
+# Code généré par IA
+
 import os
 import sys
 from pathlib import Path
 
 
-DEMOS = {
+EXs = {
     "brute-force-vuln": "Authentification/Brute force/vuln.py",
-    "brute-force-solution": "Authentification/Brute force/Soultion.py",
+    "brute-force-solution": "Authentification/Brute force/Solution.py",
     "cookies-vuln": "Authentification/cookies_Vuln/cookies_Vuln.py",
     "cookies-solution": "Authentification/cookies_Vuln/cookies_Solution.py",
     "path-traversal-vuln": "Path_Traversal/server_Vuln.py",
@@ -21,13 +23,24 @@ DEMOS = {
 }
 
 
-def main() -> None:
-    demo_name = os.environ.get("DEMO", "path-traversal-vuln")
+def main():
+    """
+    Gère le lancement de l'exercice demandé.
+
+    - Prend le nom contenu dans la variable EX.
+    Regarde si le fichier est présent dans le dictionnaire EXs.
+
+    - Si oui, choisit le répertoire dans lequel se trouve le fichier demandé.
+    Enfin, exécute le fichier demandé.
+
+    """
+
+    Ex_name = os.environ.get("EX", "path-traversal-vuln")
     try:
-        relative_script = DEMOS[demo_name]
+        relative_script = EXs[Ex_name]
     except KeyError:
-        available = ", ".join(sorted(DEMOS))
-        raise SystemExit(f"Unknown DEMO={demo_name!r}. Choose one of: {available}")
+        available = ", ".join(sorted(EXs))
+        raise SystemExit(f"Unknown Exercice={Ex_name!r}. Choose one of: {available}")
 
     project_root = Path(__file__).resolve().parents[1]
     script = project_root / relative_script

@@ -11,7 +11,7 @@ Cela signifie qu'il est possible d'ajouter du code html ou JavaScript et il sera
 Cette vulnérabilité s'appelle le Cross-Site Scripting (XSS).
 """
 
-import socket,urllib,webbrowser
+import socket,urllib,os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 def IP():
@@ -29,7 +29,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 class WebServer(BaseHTTPRequestHandler):
     """
@@ -64,9 +63,5 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

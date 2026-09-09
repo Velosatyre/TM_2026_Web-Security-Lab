@@ -4,7 +4,7 @@ Il est donc vulnérable aux attaques par force brute.
 """
 
 from http.server import BaseHTTPRequestHandler,HTTPServer
-import os,socket,urllib,webbrowser
+import os,socket,urllib
 
 def IP():
 # Source - https://stackoverflow.com/a/166589
@@ -21,7 +21,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 
 #informations des utilisateurs
@@ -96,9 +95,5 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur 
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()

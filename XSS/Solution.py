@@ -3,7 +3,7 @@ La solution ici est tout d'abord d'encoder le message reçu.
 Quand le navigateur web reçoit la page html, le message sera interprété comme du texte et non comme du code html ou JavaScript.
 """
 
-import socket,urllib,html,webbrowser
+import socket,urllib,html,os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 def IP():
@@ -21,7 +21,6 @@ def IP():
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-print("adresse du serveur: " + HOST + ":" + str(PORT))
 
 class WebServer(BaseHTTPRequestHandler):
     """
@@ -60,9 +59,5 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 Server = HTTPServer((HOST, PORT), WebServer)
-# Ouvre le navigateur vers l'adresse du serveur
-if os.environ.get("OPEN_BROWSER") == "1":
-    webbrowser.open("http://localhost:" + str(PORT))
 
-print("server running")
 Server.serve_forever()
