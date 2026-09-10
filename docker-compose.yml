@@ -22,7 +22,7 @@ services:
       EX: ${EX:-path-traversal-vuln}
       DATABASE_URL: postgresql://tm_user:tm_password@db:5432/tm_db
     ports:
-      - "${WEB_PORT:-8080}:8080"
+      - "${WEB_HOST:-127.0.0.1}:${WEB_PORT:-8080}:8080"
     depends_on:
       db:
         condition: service_healthy

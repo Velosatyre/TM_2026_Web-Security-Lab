@@ -2,6 +2,7 @@
 > #Toute la partie docker a été généré par IA
 > Cela est dû au manque de temps, mais surtout car le sujet principal du TM n'est pas l'utilisation de Docker.
 > En conséquence, mes connaissances en Docker ne sont pas suffisantes pour certains éléments
+
 > [!TIP]
 > Chaque code généré par IA contiendra en haut de page un commentaire soulignant sa provenance.
 
@@ -32,21 +33,28 @@ Ouvrir le site <http://localhost:8080> sur lequel se trouve l'exercice.
 - `blind-sql-vuln`, `blind-sql-solution`
 - `password-sql-vuln`, `password-sql-solution`
 - `union-sql-vuln`, `union-sql-solution`
-- `xss-vuln`, `xss-solution`
 
 Par exemple:
 
 ```bash
-EX=xss-vuln docker compose up --build
+EX=cookies-vuln docker compose up --build
 ```
 
 Pour lancer sur un autre port:
 
 ```bash
-WEB_PORT=8081 EX=xss-vuln docker compose up --build
+WEB_PORT=8081 EX=cookies-vuln docker compose up --build
 ```
 
 Ouvrir ensuite <http://localhost:8081>.
+
+Pour utiliser une autre adresse que `localhost`:
+
+```bash
+WEB_HOST=194.35.21.1 EX=cookies-vuln docker compose up --build
+```
+
+Ouvrir ensuite <http://194.35.21.1:808>
 
 ## Pour terminer
 
