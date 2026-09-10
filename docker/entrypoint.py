@@ -6,20 +6,23 @@ from pathlib import Path
 
 
 EXs = {
-    "brute-force-vuln": "Authentification/Brute force/vuln.py",
-    "brute-force-solution": "Authentification/Brute force/Solution.py",
+    "brute-force-vuln": "Authentification/Brute_force/Brute_Vuln.py",
+    "brute-force-solution": "Authentification/Brute_force/Brute_Solution.py",
+
     "cookies-vuln": "Authentification/cookies_Vuln/cookies_Vuln.py",
     "cookies-solution": "Authentification/cookies_Vuln/cookies_Solution.py",
-    "path-traversal-vuln": "Path_Traversal/server_Vuln.py",
-    "path-traversal-solution": "Path_Traversal/server_Solution.py",
-    "blind-sql-vuln": "SQL injections/Blind SQL/Vuln.py",
-    "blind-sql-solution": "SQL injections/Blind SQL/solution.py",
-    "password-sql-vuln": "SQL injections/Password_retrieving/SQL_injection_Vuln.py",
-    "password-sql-solution": "SQL injections/Password_retrieving/SQL_injection_Solution.py",
-    "union-sql-vuln": "SQL injections/Union based/Vuln.py",
-    "union-sql-solution": "SQL injections/Union based/solution.py",
-    "xss-vuln": "XSS/Vuln.py",
-    "xss-solution": "XSS/Solution.py",
+
+    "path-traversal-vuln": "Path_Traversal/Path_Vuln.py",
+    "path-traversal-solution": "Path_Traversal/Path_Solution.py",
+
+    "blind-sql-vuln": "SQL_injections/Blind_SQL/Blind_Vuln.py",
+    "blind-sql-solution": "SQL_injections/Blind_SQL/Blind_Solution.py",
+
+    "password-sql-vuln": "SQL_injections/Password_retrieving/SQL_injection_Vuln.py",
+    "password-sql-solution": "SQL_injections/Password_retrieving/SQL_injection_Solution.py",
+    
+    "union-sql-vuln": "SQL_injections/Union_based/Union_Vuln.py",
+    "union-sql-solution": "SQL_injections/Union_based/Union_Solution.py",
 }
 
 

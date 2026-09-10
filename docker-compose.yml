@@ -16,6 +16,8 @@ services:
 
   web:
     build: .
+    volumes:
+    - ./log:/app/log
     environment:
       EX: ${EX:-path-traversal-vuln}
       DATABASE_URL: postgresql://tm_user:tm_password@db:5432/tm_db

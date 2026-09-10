@@ -40,7 +40,7 @@ FETCH_SQL("delete from users")
 FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'), (3, 'bob', 'secret'), (4, 'test', 'test')")
 
 # efface sql_requests.log
-with open('SQL_requests.log', 'w'):
+with open('/app/log/SQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):

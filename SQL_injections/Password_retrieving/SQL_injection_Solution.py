@@ -39,7 +39,7 @@ FETCH_SQL("insert into users values (1, 'admin', 'admin'),(2,'alice', 'password'
 #liste des caractères autorisés
 allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-with open('SQL_requests.log', 'w'):
+with open('/app/log/SQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):

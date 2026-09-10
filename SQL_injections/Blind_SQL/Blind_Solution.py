@@ -34,7 +34,7 @@ logged_in_page = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 FETCH_SQL("delete from sessions")
 FETCH_SQL("create table if not exists sessions (SSID varchar(255))")
 
-with open('SQL_requests.log', 'w'):
+with open('/app/logSQL_requests.log', 'w'):
     pass
 
 """

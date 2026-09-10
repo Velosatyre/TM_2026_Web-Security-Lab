@@ -1,3 +1,4 @@
 SQL_requests.log
 .venv/*
 **/__pycache__/*
+log/*
