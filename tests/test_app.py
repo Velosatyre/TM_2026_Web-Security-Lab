@@ -4,7 +4,6 @@ import subprocess
 import sys
 import time
 import unittest
-import psycopg
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import urlopen
