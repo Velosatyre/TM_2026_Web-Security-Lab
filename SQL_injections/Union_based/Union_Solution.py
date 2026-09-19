@@ -28,7 +28,7 @@ home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 
-with open('SQL_requests.log', 'w'):
+with open('/app/logSQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):
