@@ -12,23 +12,13 @@ si le site contient beaucoup de fichiers mais cette technique bloque toute possi
 Pour rajouter encore plus de sécurité le path qui est donné est déconstruit pour ne garder que le nom du fichier
 et ensuite il est reconstruit en le joignant à un path de base (BASE_DIR) pour éviter que le serveur puisse remonter dans les dossiers. (crédit à Claude AI)
 Bien sûr cela ne marche que si tout les fichiers nécessaires se trouvent dans le même dossier que le serveur.
+
+Une solution proposée par Gemini(IA) : Utiliser pathlib.Path pour s'assurer que le chemin fournit reste confiné dans le dossier Web_server_python
+Path(requested_path).resolve().is_relative_to(BASE_DIR.resolve())
 """
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib,os,socket
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    IP = s.getsockname()[0]
-    s.close()
-    return IP
+import urllib,os
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")

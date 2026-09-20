@@ -1,42 +1,46 @@
 """
 Protection contre les attaques par force brute.
-Le serveur bloque l'adresse IP après 5 tentatives de connexion échouées.
+La première idée était de bannir l'adresse IP de l'attaquant.
+
+Cependant, bannir définitivement une IP après 5 échecs bloque tous les utilisateurs 
+légitimes partageant une même adresse IP publique (WiFi d'école, réseau 
+d'entreprise). De plus, un attaquant 
+peut faire exprès de faire bannir l'IP d'un utilisateur cible.
+
+Meilleures méthodes(selon Gemini):
+- Verrouiller temporairement le compte toutes les 3 à 5 tentatives d'une manière exponentielle.
+- Blocage combiné (IP + Nom d'utilisateur), Verrouiller le compte spécifique sur l'adresse IP plutôt que de bloquer toute l'adresse IP globale.
+Bonus : ajouter un CAPTCHA après 3 tentatives. Cela va bloquer les scripts de brute force.
 """
 
 from http.server import BaseHTTPRequestHandler,HTTPServer
-import os,socket,urllib
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    IP = s.getsockname()[0]
-    s.close()
-    return IP
+import os,urllib
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
+print(HOST+":"+str(PORT))
 
 # informations des utilisateurs
-usernames = ["admin"]
+usernames = ["admin","bob"]
 credentials = {
-    "admin": "admin"
+    "admin": "admin",
+    "bob": "secret"
 }
 
-# Dictionnaire des IP bannies
-IPs = {}
+# Nombre de tentatives de connexion
+Tries = {
+}
+
+# Les comptes bloqués
+Banned = {
+
+}
 
 
 # Chemins vers les pages HTML utilisées
 BASE_DIR = os.path.dirname(__file__)
 home_page = os.path.abspath(os.path.join(BASE_DIR, "home.html"))
-wrong_password = os.path.abspath(os.path.join(BASE_DIR, "wrong_password.html"))
-wrong_username = os.path.abspath(os.path.join(BASE_DIR, "wrong_username.html"))
+wrong_login = os.path.abspath(os.path.join(BASE_DIR, "wrong_login.html"))
 logged = os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 
 
@@ -46,8 +50,7 @@ class WebServer(BaseHTTPRequestHandler):
     - do_GET sert la page d'accueil ('home_page').
     
     - do_POST fait la même chose que dans la version vulnérable, 
-      mais enregistre les tentatives de connexion échouées 
-      et bloque l'adresse IP après 5 échecs.
+      mais après 5 tentative, la fonction va bloquer le compte avec l'adresse IP(blocage combiné).
     """
     
     def do_GET(self):
@@ -60,51 +63,125 @@ class WebServer(BaseHTTPRequestHandler):
     def do_POST(self):
         IP = str(self.client_address[0])
 
-        if IP in IPs and IPs[IP] > 5:
-            self.send_error(401, "Your IP has been banned")
-            return
-
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
         query = dict(urllib.parse.parse_qsl(body.decode()))
-
-        password = query["password"]
-        username = query["username"]
-
-        if username not in usernames:
-            self.send_response(401, "Wrong username")
-            self.end_headers()
-
-            file = open(wrong_username)
-            self.wfile.write(bytes(file.read(), "utf-8"))
-            
-        else:
         
-            if password == credentials[username]:
-                self.send_response(200)
-                self.end_headers()
+        try:
+            password = query["password"]
+            username = query["username"]
+        except:
+            self.send_response(401)
+            self.end_headers()
+        
+            file = open(wrong_login)
+            self.wfile.write(bytes(file.read(), "utf-8"))
+            return
 
-                file = open(logged)
-                self.wfile.write(bytes(file.read(), "utf-8"))
-                return
-            
+        tries_key = (IP, username)
+
+        if IP not in Banned:
+            if username in usernames:
+                if password == credentials[username]:
+                    self.send_response(200)
+                    self.end_headers()
+
+                    file = open(logged)
+                    self.wfile.write(bytes(file.read(), "utf-8"))
+                    return
+                else:
+                    if tries_key in Tries:
+                        if Tries[tries_key] >= 4:
+                            Banned[IP] = username
+                            Tries[tries_key] = 0
+
+                            self.send_error(401, "You have been banned")
+                            return
+                        else:
+                            Tries[tries_key] += 1
+                            self.send_response(401)
+                            self.end_headers()
+    
+                            file = open(wrong_login)
+                            self.wfile.write(bytes(file.read(), "utf-8"))
+                    else:
+                        Tries[tries_key] = 1
+
+                        self.send_response(401)
+                        self.end_headers()
+
+                        file = open(wrong_login)
+                        self.wfile.write(bytes(file.read(), "utf-8"))
+
             else:
+                if tries_key in Tries:
+                    if Tries[tries_key] >= 4:
+                        Banned[IP] = username
+                        Tries[tries_key] = 0
                 
-                self.send_response(401, "Wrong password")
-                self.end_headers()
+                        self.send_error(401, "You have been banned")
+                        return
+                    else:
+                        Tries[tries_key] += 1
+                        self.send_response(401)
+                        self.end_headers()
+                
+                        file = open(wrong_login)
+                        self.wfile.write(bytes(file.read(), "utf-8"))
+                else:
+                    Tries[tries_key] = 1
+                
+                    self.send_response(401)
+                    self.end_headers()
+                
+                    file = open(wrong_login)
+                    self.wfile.write(bytes(file.read(), "utf-8"))
 
-                file = open(wrong_password)
+        elif IP in Banned and Banned[IP] != username:
+
+            if username in usernames:
+                if password == credentials[username]:
+                    self.send_response(200)
+                    self.end_headers()
+
+                    file = open(logged)
+                    self.wfile.write(bytes(file.read(), "utf-8"))
+                    return
+                else:
+                    if tries_key in Tries:
+                        if Tries[tries_key] >= 4:
+                            Banned[IP] = username
+                            Tries[tries_key] = 0
+
+                            self.send_error(401, "You have been banned")
+                            return
+                        else:
+                            Tries[tries_key] += 1
+                            self.send_response(401)
+                            self.end_headers()
+    
+                            file = open(wrong_login)
+                            self.wfile.write(bytes(file.read(), "utf-8"))
+                    else:
+                        Tries[tries_key] = 1
+
+                        self.send_response(401)
+                        self.end_headers()
+
+                        file = open(wrong_login)
+                        self.wfile.write(bytes(file.read(), "utf-8"))
+
+            else:
+                self.send_response(401)
+                self.end_headers()
+    
+                file = open(wrong_login)
                 self.wfile.write(bytes(file.read(), "utf-8"))
 
-                try:
-                    number = IPs[IP]
-                    IPs.update({IP: number + 1})
-                
-                except:
-                    IPs[IP] = 1
-
-                return
-
+        else:
+            self.send_response(401, "You are banned")
+            self.end_headers()
+            
 
 Server = HTTPServer((HOST, PORT), WebServer)
 Server.serve_forever()

@@ -6,22 +6,8 @@ mais comme des données.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
-import os,secrets,socket
+import os,secrets
 from SQL_fetch import FETCH_SQL
-
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    IP = s.getsockname()[0]
-    s.close()
-    return IP
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -84,7 +70,7 @@ class WebServer(BaseHTTPRequestHandler):
 
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
-                FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
+                FETCH_SQL("insert into sessions (SSID) values (%s)", (SSID,))
 
             elif len(sessions) > 0:
                 self.send_response(200)
@@ -104,7 +90,7 @@ class WebServer(BaseHTTPRequestHandler):
 
                 file = open(home_page)
                 html = file.read().format(message="WELCOME")
-                FETCH_SQL("insert into sessions (SSID) values ('" + SSID + "')")
+                FETCH_SQL("insert into sessions (SSID) values (%s)", (SSID,))
 
         self.wfile.write(bytes(html, "utf-8"))  
         

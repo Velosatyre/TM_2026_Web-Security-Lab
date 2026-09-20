@@ -7,22 +7,9 @@ Autre solution : hasher les infos des utilisateurs dans la database et aussi has
 La méthode la plus simple et la plus rapide est d'utiliser les données comme paramètres. 
 """
 
-import os,urllib,socket
+import os,urllib
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    IP = s.getsockname()[0]
-    s.close()
-    return IP
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -91,7 +78,7 @@ class WebServer(BaseHTTPRequestHandler):
 
         self.wfile.write(bytes(html, "utf-8"))
 
-class WebServerParamètres(BaseHTTPRequestHandler):
+class WebServerParameters(BaseHTTPRequestHandler):
     """
     - do_GET envoie la page principale
     
@@ -140,6 +127,6 @@ class WebServerParamètres(BaseHTTPRequestHandler):
         self.wfile.write(bytes(html, "utf-8"))
 
 
-Server = HTTPServer((HOST, PORT), WebServer)
+Server = HTTPServer((HOST, PORT), WebServerParameters)
 
 Server.serve_forever()

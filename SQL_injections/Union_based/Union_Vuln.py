@@ -4,21 +4,9 @@ Ici il est possible de voir le résultat de la requête SQl,
 Ce qui permet d'utiliser les injections utilisant UNION pour récupérer des données de la base de données.
 """
 
-import os,urllib,socket
+import os,urllib
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('8.8.8.8', 80))
-    IP = s.getsockname()[0]
-    return IP
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -34,7 +22,7 @@ with open('/app/log/SQL_requests.log', 'w'):
 class WebServer(BaseHTTPRequestHandler):
     """
     - do_GET prend la catégorie reçue, 
-      va cherch er dans la base de données tout les produits de cette catégorie et les affiche.
+      va chercher er dans la base de données tout les produits de cette catégorie et les affiche.
       Si la catégorie n'est pas dans la base de données, le serveur renvoie tous les produits.
     """
 

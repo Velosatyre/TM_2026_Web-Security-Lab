@@ -3,22 +3,9 @@ Solution très simple, il suffit de faire un check juste avant en regardant si l
 est bien dans la liste des catégories de la base de données.
 """
 
-import os,urllib,socket
+import os,urllib
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from SQL_fetch import FETCH_SQL
-
-def IP():
-# Source - https://stackoverflow.com/a/166589
-# Posted by UnkwnTech, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-08-17, License - CC BY-SA 3.0
-    """
-    Retourne l'adresse IP locale de la machine.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    IP = s.getsockname()[0]
-    s.close()
-    return IP
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -28,7 +15,7 @@ home_page = os.path.abspath(os.path.join(BASE_DIR, "login.html"))
 logged_in= os.path.abspath(os.path.join(BASE_DIR, "logged_in.html"))
 home_err = os.path.abspath(os.path.join(BASE_DIR, "home_err.html"))
 
-with open('/app/logSQL_requests.log', 'w'):
+with open('/app/log/SQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):
