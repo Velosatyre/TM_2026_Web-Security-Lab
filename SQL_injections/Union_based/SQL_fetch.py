@@ -1,23 +1,3 @@
-"""
-Afin de créer une base de données pour la première fois que vous utilisez Postgresql.
-Il vous faudra executer quelques commandes dans le Terminal.
-L'auteur de ce programme ne prend aucune responsabilité sur le résultat d'execution du code.
-Linux :
-
-$ whoami
-# Cela va vous fournir votre nom d'utilisateur
-
-$ sudo -u postgres psql -c create database tm_db;
-
-$ sudo -u postgres psql -d tm_db -c grant all on table to #mettez votre nom d'utilisateur ici#;
-
-$ sudo -u postgres psql -d tm_db -c grant all on schema public to #nom d'utilisateur#;
-
-Windows:
-https://www.w3schools.com/postgresql/postgresql_install.php
-je ne sais pas vraiment si le projet marche sur windows
-"""
-
 import os
 import psycopg
 import logging
@@ -26,11 +6,11 @@ import time
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='/app/log/SQL_requests.log', level=logging.INFO)
 
-def FETCH_SQL(sql_query, params=None): # params handling made by AI
+def FETCH_SQL(sql_query, params=None): # params handling made by Copilot from VS code
     """
     https://www.psycopg.org/psycopg3/docs/basic/usage.html
     Cette fonction a pour but d'envoyer les requêtes SQL à la base de données.
-    Au passage elle crée un historique des requêtes.
+    Au passage elle crée un historique des requêtes dans le fichier SQL_requests.log
     """
     with psycopg.connect(os.environ.get("DATABASE_URL", "dbname=tm_db")) as conn:
         conn.autocommit = True
@@ -40,7 +20,6 @@ def FETCH_SQL(sql_query, params=None): # params handling made by AI
                     cur.execute(sql_query)
                     logger.info(time.asctime(time.gmtime())+f" : Executed SQL query: {sql_query}")
                 else:
-                    # Normalize single non-sequence param (e.g. a string) to a tuple
                     if not isinstance(params, (list, tuple, dict)):
                         exec_params = (params,)
                     else:

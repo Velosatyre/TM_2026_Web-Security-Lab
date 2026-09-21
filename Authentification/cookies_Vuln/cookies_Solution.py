@@ -89,7 +89,7 @@ class WebServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(files.read(), "utf-8"))
 
 
-    def do_POST(self): # Aidé par IA
+    def do_POST(self): # Aidé par Chatgpt 5.5 pour l'idée de la fonction, le 12.5.2026
         file = home_page
 
         try:
@@ -107,7 +107,8 @@ class WebServer(BaseHTTPRequestHandler):
 
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
-                    self.send_header("Set-Cookie", f"SSID={SSID} ; max-age=60")
+                    # Gemini a ajouté, le 9.9.2026: HttpOnly, Secure, SameSite=Strict
+                    self.send_header("Set-Cookie", f"SSID={SSID} ; max-age=60 ; HttpOnly ; SameSite=Strict ; Secure")
                     self.end_headers()
 
                     file = logged_in_page

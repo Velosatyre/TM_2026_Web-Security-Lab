@@ -41,7 +41,7 @@ class WebServer(BaseHTTPRequestHandler):
             products = FETCH_SQL("SELECT name, price FROM products where released = TRUE")
 
 
-        # aidé par l'IA
+        # Génération de la page html, aidé par Copilot de VS code, le 16.6.2026
         html = """
         </head>
         <body>

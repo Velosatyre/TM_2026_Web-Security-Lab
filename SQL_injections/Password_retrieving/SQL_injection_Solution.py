@@ -4,6 +4,7 @@ Par exemple, un attaquant pourrait utiliser des encodages alternatifs pour conto
 Une manière meilleure mais plus lente consiste à créer une liste de caractères autorisés et les filtrer.
 
 Autre solution : hasher les infos des utilisateurs dans la database et aussi hasher ce que les clients envoient.
+
 La méthode la plus simple et la plus rapide est d'utiliser les données comme paramètres. 
 """
 
@@ -28,55 +29,6 @@ allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 with open('/app/log/SQL_requests.log', 'w'):
     pass
-
-class WebServer(BaseHTTPRequestHandler):
-    """
-    - do_GET envoie la page principale
-    
-    - do_POST récupère les données du formulaire de connexion,
-      filtre les caractères spéciaux dans le nom d'utilisateur,
-      puis exécute une requête SQL pour vérifier si l'utilisateur existe et si le mot de passe correspond.
-    """
-
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-
-        file = open(home_page)
-        self.wfile.write(bytes(file.read(), "utf-8"))
-
-    def do_POST(self):
-        content_length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_length)
-        query = dict(urllib.parse.parse_qsl(body.decode()))
-
-        username = str(query["username"])
-        username = ''.join(c for c in username if c in allowed_chars)
-
-        try :
-            SQLusername = FETCH_SQL("select * from users where name = '" + username + "'")
-
-        except:
-            SQLusername = []
-            
-        if len(SQLusername) > 0 and SQLusername[0][2] == query["password"]:
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-
-            file = open(logged_in)
-            html = file.read().format(username=username,password=query["password"])
-
-        else:
-            self.send_response(401)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-
-            file = open(home_err)
-            html = file.read()
-
-        self.wfile.write(bytes(html, "utf-8"))
 
 class WebServerParameters(BaseHTTPRequestHandler):
     """

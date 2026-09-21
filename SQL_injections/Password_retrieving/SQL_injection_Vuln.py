@@ -31,7 +31,11 @@ with open('/app/log/SQL_requests.log', 'w'):
     pass
 
 class WebServer(BaseHTTPRequestHandler):
+    """
+    - do_GET envoie la page de connexion.
 
+    -do_POST prend les infos de connexion est les insère directement dans une requête SQL
+    """
 
     def do_GET(self):
         self.send_response(200)
