@@ -1,5 +1,3 @@
-# Code généré par IA
-
 import os
 import sys
 from pathlib import Path
@@ -25,7 +23,7 @@ EXs = {
     "union-sql-solution": "SQL_injections/Union_based/Union_Solution.py",
 }
 
-
+# Code généré par Copilot de VS code, le 9.9.2026
 def main():
     """
     Gère le lancement de l'exercice demandé.
@@ -38,7 +36,7 @@ def main():
 
     """
 
-    Ex_name = os.environ.get("EX", "path-traversal-vuln")
+    Ex_name = os.environ.get("EX")
     try:
         relative_script = EXs[Ex_name]
     except KeyError:

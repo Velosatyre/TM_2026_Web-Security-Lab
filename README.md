@@ -83,6 +83,9 @@ Depuis le dossier principal du projet, choisissez un exercice avec la variable `
 EX=path-traversal-vuln docker compose up --build
 ```
 
+Si vous avez un doute sur la syntaxe des noms des exercices, il vous suffit de ne pas mettre la variable Ex et vous verrez une liste des exercices.
+
+
 Ensuite, ouvrez le site dans votre navigateur :
 
 ```text
