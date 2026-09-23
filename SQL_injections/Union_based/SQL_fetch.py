@@ -4,7 +4,7 @@ import logging
 import time
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='SQL_requests.log', level=logging.INFO)
+logging.basicConfig(filename='/app/log/SQL_requests.log', level=logging.INFO)
 
 def FETCH_SQL(sql_query, params=None): # params handling made by Copilot from VS code
     """

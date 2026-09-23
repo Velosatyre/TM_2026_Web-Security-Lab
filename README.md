@@ -111,7 +111,7 @@ EX=cookies-solution docker compose up --build
 ### Changer le port
 
 ```bash
-WEB_PORT=8081 EX=cookies-vuln docker compose up --build
+PORT=8081 EX=cookies-vuln docker compose up --build
 ```
 
 Puis ouvrir :
@@ -123,7 +123,7 @@ http://localhost:8081
 ### Utiliser une autre adresse d'écoute
 
 ```bash
-WEB_HOST=194.35.21.1 EX=cookies-vuln docker compose up --build
+HOST=194.35.21.1 EX=cookies-vuln docker compose up --build
 ```
 
 Puis ouvrir :

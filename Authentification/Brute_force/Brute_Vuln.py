@@ -8,7 +8,7 @@ import os,urllib
 
 PORT = int(os.environ.get("PORT", "8080"))
 HOST = os.environ.get("HOST", "0.0.0.0")
-
+print(HOST+":"+str(PORT))
 
 #informations des utilisateurs
 usernames = ["admin"]

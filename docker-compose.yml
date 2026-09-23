@@ -1,3 +1,5 @@
+# Code généré par Copilot de VS code, le 9.9.2026
+
 services:
   db:
     image: postgres:16-alpine
@@ -22,7 +24,7 @@ services:
       EX: ${EX:-}
       DATABASE_URL: postgresql://tm_user:tm_password@db:5432/tm_db
     ports:
-      - "${WEB_HOST:-0.0.0.0}:${WEB_PORT:-8080}:8080"
+      - "${HOST:-0.0.0.0}:${PORT:-8080}:8080"
     depends_on:
       db:
         condition: service_healthy

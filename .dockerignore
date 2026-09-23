@@ -1,5 +1,3 @@
 .git
-.venv
-__pycache__
-*.pyc
-SQL_requests.log
+.venv/*
+**/__pycache__/*
